@@ -31,7 +31,7 @@ async function onMessageInit(message) {
 async function onRoomComeAndGo(message) {
     let room = message.room();
     const name = message.talker().name();
-    console.log(rootListArr.includes(name), '是否为白名单')
+    // console.log(rootListArr.includes(name), '是否为白名单')
     if (!room) {
         return;
     }

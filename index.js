@@ -4,7 +4,7 @@ const {
 const { onScan, onLogin, onMessage } = require('./src/events');
 const { PuppetPadlocal } = require("wechaty-puppet-padlocal");
 const puppet = new PuppetPadlocal({
-    token: 'puppet_padlocal_475bf109ca1a48b0ba028a41c10f4ae0',
+    token: 'puppet_padlocal_4ba913f47e8c418893abf899ed1b2d4f',
   });
 const bot = new Wechaty({
     name: 'ding',
