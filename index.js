@@ -1,7 +1,7 @@
 const {
     Wechaty,
 } = require('wechaty');
-const { onScan, onLogin, onMessage } = require('./src/events');
+const { onScan, onLogin, onMessage, onReply } = require('./src/events');
 const { PuppetPadlocal } = require("wechaty-puppet-padlocal");
 const puppet = new PuppetPadlocal({
     token: 'puppet_padlocal_4ba913f47e8c418893abf899ed1b2d4f',
@@ -15,6 +15,7 @@ bot
 .on('scan', onScan)
 .on('login', onLogin)
 .on('message', onMessage)
+.on('message', onReply)
 
 /**
  * Global Event: room-join

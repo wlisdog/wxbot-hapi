@@ -30,6 +30,7 @@ async function onMessageInit(message) {
 
 async function onRoomComeAndGo(message) {
     let room = message.room();
+    // console.log(message)
     const name = message.talker().name();
     // console.log(rootListArr.includes(name), '是否为白名单')
     if (!room) {
@@ -39,10 +40,10 @@ async function onRoomComeAndGo(message) {
     onRoomListionComeAndGo({
         room,
         name,
-        topic: '测试测试',
+        topic: '11111',
         startText: '开始',
         endText: '好了好了',
-        userName: 'lex.',
+        userName: '杨大刚',
         endSay: ['over'],
         addSay: ['1', '2', '3'],
         duration: 5000
@@ -67,6 +68,10 @@ async function onRoomListionComeAndGo(data, message) {
     const contact = await bot.bot.Contact.find({name: data.userName});
     let { room } = data;
     const topic = await room.topic();
+    // await room.say('<?xml version="1.0"?>\n' +
+    // '<msg>\n' +
+    // '\t<img aeskey="295c420c8cb91a70cf641df203c88eb8" encryver="1" cdnthumbaeskey="295c420c8cb91a70cf641df203c88eb8" cdnthumburl="3078020100046c306a02010002049e40ce6602032f4f5502042d73512a020461a6f0b3044533346234303336643033643235626339623436633733323865663733636239645f66393837633535642d633133352d346535642d616238612d3333373261393633393132340204012400010201000405004c4c6d00" cdnthumblength="3966" cdnthumbheight="150" cdnthumbwidth="148" cdnmidheight="0" cdnmidwidth="0" cdnhdheight="0" cdnhdwidth="0" cdnmidimgurl="3078020100046c306a02010002049e40ce6602032f4f5502042d73512a020461a6f0b3044533346234303336643033643235626339623436633733323865663733636239645f66393837633535642d633133352d346535642d616238612d3333373261393633393132340204012400010201000405004c4c6d00" length="49862" cdnbigimgurl="3078020100046c306a02010002049e40ce6602032f4f5502042d73512a020461a6f0b3044533346234303336643033643235626339623436633733323865663733636239645f66393837633535642d633133352d346535642d616238612d3333373261393633393132340204012400010201000405004c4c6d00" hdlength="49918" md5="02b4ae50caaa9f21c309fd1136339835" />\n' +
+    // '</msg>\n',contact)
 
     if (topic === data.topic && rootListArr.includes(data.name) && message.text() === data.startText) {
         isRoomComeAndGoFlag = true
