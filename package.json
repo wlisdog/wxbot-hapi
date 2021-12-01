@@ -13,7 +13,11 @@
     "prettier": "^2.4.1",
     "qrcode-terminal": "^0.12.0",
     "wechaty": "^0.60.10",
-    "wechaty-puppet-wechat": "^1.0.1",
-    "wechaty-puppet-padlocal": "^0.4.2"
+    "wechaty-puppet-padlocal": "^0.4.2",
+    "wechaty-puppet-wechat": "^1.0.1"
+  },
+  "dependencies": {
+    "node-schedule": "^2.1.0",
+    "superagent": "^6.1.0"
   }
 }

@@ -1,4 +1,4 @@
-// const { onStopRemind } = require("../plugins/schedule");
+// const { onToWorkMyGirl } = require("../plugins/schedule");
 // const request = require("request");
 // const fs = require("fs");
 // const path = require('path');
@@ -7,6 +7,7 @@
 const bot = require('../../index') // 获取微信实例
 let isRoomComeAndGoFlag = false
 let timer = null
+let isMyGrilTalkFlag = false
 const rootListArr = [ "YHL.", "Srecko."]
 const onMessage = (message) => {
     if (message.self()) return;
@@ -19,8 +20,26 @@ const onMessage = (message) => {
  */
 async function onMessageInit(message) {
     await onRoomComeAndGo(message);
+    await onMyGirlMessage(message);
 //   await onStopRemind(message, 'toLexInterval', 'Lex.');
 //   await onEmojiToImage(message);
+}
+
+/**
+ * @Description 王总回话
+ */
+async function onMyGirlMessage(message) {
+    const name = message.talker().name();
+    const contact = await bot.bot.Contact.find({name: 'YHL.'});
+    if (name === '小抽基') {
+        if (!isMyGrilTalkFlag) {
+            message.say('好的领导，已帮您通知部门小杨, 领导路上注意安全')
+        } else {
+            message.say('好的呢，领导说的都对')
+        }
+        contact.say(`领导发话${message.text()}`)
+        isMyGrilTalkFlag = true
+    }
 }
 
 /**
@@ -31,7 +50,6 @@ async function onMessageInit(message) {
 async function onRoomComeAndGo(message) {
     let room = message.room();
     const name = message.talker().name();
-    console.log(rootListArr.includes(name), '是否为白名单')
     if (!room) {
         return;
     }
