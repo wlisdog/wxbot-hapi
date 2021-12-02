@@ -1,8 +1,8 @@
-const qrcodeTerminal  = require('qrcode-terminal');
-const {
+import qrcodeTerminal from 'qrcode-terminal';
+import {
     ScanStatus,
     log,
-} = require('wechaty');
+} from 'wechaty';
 
 const onScan = (qrcode, status) => {
     if (status === ScanStatus.Waiting || status === ScanStatus.Timeout) {
@@ -17,5 +17,4 @@ const onScan = (qrcode, status) => {
       }
 };
 
-module.exports = onScan;
-
+export default onScan;

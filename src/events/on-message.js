@@ -1,14 +1,18 @@
-// const { onToWorkMyGirl } = require("../plugins/schedule");
-// const request = require("request");
-// const fs = require("fs");
-// const path = require('path');
+// import request from "request";
+// import fs from "fs";
+// import path from 'path';
 // const dir = path.join(__dirname + '/../images');
+// import { FileBox } from 'file-box';
+import bot from '../../index.js'; // 获取微信实例
+import {
+    FileBox,
+} from 'wechaty';
 
-const bot = require('../../index') // 获取微信实例
-let isRoomComeAndGoFlag = false
+let isRoomComeAndGoFlag = false; // 是否开启群聊踢人操作。 后期改为数据库存储
+let isEmojiToImageFlag = false; // 是否开启表情包转图片功能。 后期改为数据库存储
 let timer = null
 let isMyGrilTalkFlag = false
-const rootListArr = [ "YHL.", "Srecko."]
+const rootListArr = [ "YHL.", "Srecko."] // 白名单 后期改为接口形式
 const onMessage = (message) => {
     if (message.self()) return;
     onMessageInit(message);
@@ -16,17 +20,54 @@ const onMessage = (message) => {
 
 
 /**
- * @Description 初始化消息方法
+ * 初始化消息方法
+ * @param message {Class} 消息实例
  */
 async function onMessageInit(message) {
     await onRoomComeAndGo(message);
-    await onMyGirlMessage(message);
-//   await onStopRemind(message, 'toLexInterval', 'Lex.');
-//   await onEmojiToImage(message);
+    // await onMyGirlMessage(message);
+    await onEmojiToImageFlag(message);
+    await onEmojiToImage(message);
+    // await onFunctionList(message);
 }
 
 /**
- * @Description 王总回话
+ * 功能列表回复 - 后期改为接口形式
+ * @param message {Class} 消息实例
+ */
+async function onFunctionList(message) {
+    const name = message.talker().name();
+    // 判断是否为有权限用户
+    if (rootListArr.includes(name) && message.text() === '功能列表') {
+        message.say(`
+            1. 微信群拉人踢人骂人一体化。
+            2. 表情包转图片。
+            3. 定时任务消息。
+            4. 昆哥语录(待开发)。
+        `)
+    }
+}
+
+/**
+ * 表情包转换图片开关
+ * @param message {Class} 消息实例
+ */
+async function onEmojiToImageFlag(message) {
+    const name = message.talker().name();
+    // 判断是否为有权限用户
+    if (rootListArr.includes(name) && message.text() === '开启表情包转换') {
+        isEmojiToImageFlag = true
+        message.say(`开启表情包转换成功~`)
+    }
+    if (rootListArr.includes(name) && message.text() === '关闭表情包转换') {
+        isEmojiToImageFlag = false
+        message.say(`关闭表情包转换成功~`)
+    }
+}
+
+/**
+ * 王总回话
+ * @param message {Class} 消息实例
  */
 async function onMyGirlMessage(message) {
     const name = message.talker().name();
@@ -43,8 +84,8 @@ async function onMyGirlMessage(message) {
 }
 
 /**
- * @Description 群聊土遁-进进出出
- *  
+ * 群聊土遁-进进出出
+ * @param message {Class} 消息实例
  */
 
 async function onRoomComeAndGo(message) {
@@ -53,40 +94,38 @@ async function onRoomComeAndGo(message) {
     if (!room) {
         return;
     }
-    
     onRoomListionComeAndGo({
         room,
         name,
         topic: '测试测试',
-        startText: '开始',
+        startText: '搞起搞起',
         endText: '好了好了',
         userName: 'lex.',
         endSay: ['over'],
-        addSay: ['1', '2', '3'],
+        addSay: ['欢迎欢迎'],
         duration: 5000
     }, message);
 }
 
 /**
- * @Description 群聊-进进出出
- * @param message Class 消息数据
- *        data Object 监听参数对象
- *          room  Class 群聊房间实例
- *          name String发送消息人昵称
- *          topic String 监听群聊名称匹配
- *          startText String 开始口令
- *          endText String 结束口令
- *          userName String 被操作人的微信昵称
- *          endSay Array 操作结束留言
- *          addSay Array 添加进入留言
- *          duration Number 间隔时间
+ * 群聊踢人拉人喷人
+ * @param message {Class} 消息实例
+ * @param data {Object} 监听参数对象
+ * @param   room {Class} 群聊房间实例
+ * @param   name {String} 发送消息人昵称
+ * @param   topic {String} 监听群聊名称匹配
+ * @param   startText {String} 开始口令
+ * @param   endText {String} 结束口令
+ * @param   userName {String} 被操作人的微信昵称
+ * @param   endSay {Array} 操作结束留言
+ * @param   addSay {Array} 添加进入留言
+ * @param   duration {Number} 间隔时间
  */
 async function onRoomListionComeAndGo(data, message) {
-    const contact = await bot.bot.Contact.find({name: data.userName});
     let { room } = data;
     const topic = await room.topic();
-
     if (topic === data.topic && rootListArr.includes(data.name) && message.text() === data.startText) {
+        const contact = await bot.bot.Contact.find({name: data.userName});
         isRoomComeAndGoFlag = true
         timer = setInterval(async () => {
             if (contact) {
@@ -106,6 +145,7 @@ async function onRoomListionComeAndGo(data, message) {
         }, data.duration)
     }
     if (topic === data.topic && rootListArr.includes(data.name) && message.text() === data.endText) {
+        const contact = await bot.bot.Contact.find({name: data.userName});
         isRoomComeAndGoFlag = false
         clearInterval(timer)
         if (contact) {
@@ -121,23 +161,31 @@ async function onRoomListionComeAndGo(data, message) {
 }
 
 
-// /**
-//  * @desc 表情包转换图片路径
-//  */
-// async function onEmojiToImage(message) {
-//   let return_text = message.text().replace(/\s/g,"").replace(/&amp;/g, "&");
-//   let url;
-//   if (return_text.indexOf('emoji') > -1) {
-//     url = return_text.split('cdnurl=')[1].split('designerid')[0];
-//     // url = url.substring(1, url.length - 2);
-//     if (url.indexOf('emoji') > -1) {
-//       await message.say(url);
-//     } else {
-//       let timestamp = new Date().getTime();
-//       request(url).pipe(fs.createWriteStream(`${dir}/${timestamp}.jpg`));
-//       await message.say(`api.yangdagang.com/src/images/${timestamp}.jpg`);
-//     }
-//   }
-// }
+/**
+ * 表情包转换图片路径
+ * @param message {Class} 消息实例
+ * 
+ */
+async function onEmojiToImage(message) {
+    let return_text = message.text().replace(/\s/g,"").replace(/&amp;/g, "&");
+    let url;
+    if (return_text.indexOf('emoji') > -1 && !isEmojiToImageFlag && rootListArr.includes(message.talker().name())) {
+        url = return_text.split('cdnurl=')[1].split('designerid')[0];
+        url = url.substring(1, url.length - 1);
+        await message.say('正在转换路径，请稍后');
+        const fileBox = FileBox.fromUrl('http://ljh.yangdagang.com/pictures/GszIUT5GePsBzumF8iw7z7ZR08ej6epQ4nh5Q-HP6ZWu5KRTNQZrhpVRq4AN-_uN.jpg');
+        await message.say(fileBox);
+        // if (url.indexOf('emoji') > -1) {
+            
+        // } else {
+        //     const fileBox = FileBox.fromUrl(url);
+        //     await message.say(fileBox);
 
-module.exports = onMessage;
+        //     // let timestamp = new Date().getTime();
+        //     // request(url).pipe(fs.createWriteStream(`${dir}/${timestamp}.jpg`));
+        //     // await message.say(`api.yangdagang.com/src/images/${timestamp}.jpg`);
+        // }
+    }
+}
+
+export default onMessage;

@@ -2,8 +2,8 @@
  * @Description:  定时任务
  * @Date: 2021-11-3016:34:52
  */
-const schedule = require('node-schedule');
-const bot = require("../../../index");
+import schedule from 'node-schedule';
+import bot from "../../../index.js";
 
 //其他规则见 https://www.npmjs.com/package/node-schedule
 // 规则参数讲解    *代表通配符
@@ -49,6 +49,7 @@ const onToWorkMyGirl = async () => {
     });
 }
 
-module.exports = {
-  onToWorkMyGirl
+export {
+  onToWorkMyGirl,
+  cancelSchedule
 };

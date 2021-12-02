@@ -1,4 +1,4 @@
-const superagent = require('superagent')
+import superagent from 'superagent';
 
 /**
  * @Description 接口请求封装 使用superagent发送请求
@@ -7,6 +7,7 @@ const superagent = require('superagent')
  * @param {Object} params 
  * @param {Object} data 
  * @param {String} cookies 
+ * @returns Promise
  */
 function ajax(url, method, params, data, cookies) {
 	return new Promise(function (resolve, reject) {
@@ -22,6 +23,6 @@ function ajax(url, method, params, data, cookies) {
 			})
 	})
 }
-module.exports = {
+export {
 	ajax
 }
