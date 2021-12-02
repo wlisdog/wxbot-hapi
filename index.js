@@ -1,8 +1,8 @@
-const {
+import {
     Wechaty,
-} = require('wechaty');
-const { onScan, onLogin, onMessage, onReply } = require('./src/events');
-const { PuppetPadlocal } = require("wechaty-puppet-padlocal");
+} from 'wechaty';
+import { onScan, onLogin, onMessage, onReply }  from './src/events/index.js';
+import { PuppetPadlocal }  from "wechaty-puppet-padlocal";
 const puppet = new PuppetPadlocal({
     token: 'puppet_padlocal_4ba913f47e8c418893abf899ed1b2d4f',
   });
@@ -35,4 +35,6 @@ bot
 .start()
 .catch(console.error)
 
-module.exports.bot = bot;
+export default {
+    bot
+};

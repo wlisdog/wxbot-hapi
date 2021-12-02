@@ -1,8 +1,9 @@
-const onScan = require('./on-scan');
-const onLogin = require('./on-login');
-const onMessage = require('./on-message');
-const onReply = require('./on-reply');
-module.exports = {
+import onScan from './on-scan.js';
+import onLogin from './on-login.js';
+import onMessage from './on-message.js';
+import onReply from './on-reply.js';
+
+export {
   onScan,
   onLogin,
   onReply,
