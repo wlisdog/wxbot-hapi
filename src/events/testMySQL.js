@@ -23,7 +23,7 @@ async function test() {
                 console.log('query error')
                 reject()
             }else{
-                resolve(JSON.parse(JSON.stringify(row)))
+                resolve(row)
             }
             
         })

@@ -24,6 +24,11 @@ const onMessage = (message) => {
  * @param message {Class} 消息实例
  */
 async function onMessageInit(message) {
+    // 暂时限定此方法
+    let room = message.room();
+    if (room) {
+        return;
+    }
     await onRoomComeAndGo(message);
     // await onMyGirlMessage(message);
     await onEmojiToImageFlag(message);
