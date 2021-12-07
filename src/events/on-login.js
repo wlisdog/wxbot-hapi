@@ -10,6 +10,6 @@ async function onLogin (user) {
 };
 
 async function onLoginInit () {
-  await onToWorkMyGirl();
+  // await onToWorkMyGirl();
 }
 export default onLogin;

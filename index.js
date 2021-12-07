@@ -4,7 +4,7 @@ import {
 import { onScan, onLogin, onMessage, onReply }  from './src/events/index.js';
 import { PuppetPadlocal }  from "wechaty-puppet-padlocal";
 const puppet = new PuppetPadlocal({
-    token: 'puppet_padlocal_4ba913f47e8c418893abf899ed1b2d4f',
+    token: 'puppet_padlocal_648624986a864fd48630614a8e37ba31',
   });
 const bot = new Wechaty({
     name: 'ding',
