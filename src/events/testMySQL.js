@@ -6,7 +6,7 @@
 import mysql from 'mysql';
 
 
-async function test() {
+async function test(sql) {
 
     return new Promise((resolve,reject)=>{
         
@@ -17,7 +17,7 @@ async function test() {
             database:'wechat_test'
         })
 
-        connection.query("select MediaId from imagemessage order by rand() limit 1",function(err,row){
+        connection.query(sql,function(err,row){
             connection.end()
             if(err){
                 console.log('query error')

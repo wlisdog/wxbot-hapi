@@ -19,11 +19,14 @@
   },
   "dependencies": {
     "@nestjs/typeorm": "^8.0.2",
+    "dayjs": "^1.10.7",
     "fs": "^0.0.1-security",
     "hot-import": "^0.2.14",
     "mysql": "^2.18.1",
     "node-schedule": "^2.1.0",
     "request": "^2.88.2",
+    "silly-datetime": "^0.1.2",
+    "soap": "^0.43.0",
     "superagent": "^6.1.0",
     "typeorm": "^0.2.41"
   }
