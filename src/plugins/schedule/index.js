@@ -5,7 +5,7 @@
 import schedule from 'node-schedule';
 import dayjs from 'dayjs';
 import bot from "../../../index.js";
-import test from '../../../src/events/testMySQL.js';
+import query from '../../../src/events/testMySQL.js';
 import {sleep} from '../../../src/events/sleepThread.js';
 
 //其他规则见 https://www.npmjs.com/package/node-schedule
@@ -51,49 +51,44 @@ const onToWeatherRemind = async () => {
             
             let date = dayjs().format('YYYY-MM-DD')
             let sql = `select a.Content from weatherInfo a where a.CityName = '${cityname}' and a.Create_Date = '${date}' and a.Create_Time = (select max(w.Create_Time) from weatherInfo w where w.CityName = '${cityname}' and w.Create_Date = '${date}' )`;
-            let weatherJson = await test(sql);
+            let weatherJson = await query(sql);
 
             let Content = weatherJson[0].Content
-            const room2 = bot.bot.Room.find('打卡');
-            (await room2).say('早上好~')
-            await sleep(1000);   //暂停1秒
-            sql = ``;
+            const room2 = await bot.bot.Room.find('打卡');
 
-            (await room2).say('下面是天气预报');
+            await room2.say('早上好~')
             await sleep(1000);   //暂停1秒
-            sql = ``;
 
-            (await room2).say(Content);
+            await room2.say('下面是天气预报');
             await sleep(1000);   //暂停1秒
-            sql = ``;
+
+            await room2.say(Content);
+            await sleep(1000);   //暂停1秒
  
-            const room3 = bot.bot.Room.find('11111');
-            (await room3).say('早上好~');
-            await sleep(1000);   //暂停1秒
-            sql = ``;
-            
-            (await room3).say('下面是天气预报');
-            await sleep(1000);   //暂停1秒
-            sql = ``;
+            const room3 = await bot.bot.Room.find('11111');
 
-            (await room3).say(Content);
+            await room3.say('早上好~');
             await sleep(1000);   //暂停1秒
-            sql = ``;
+            
+            await room3.say('下面是天气预报');
+            await sleep(1000);   //暂停1秒
+
+            await room3.say(Content);
+            await sleep(1000);   //暂停1秒
 
             cityname = '长沙';
             sql = `select a.Content from weatherInfo a where a.CityName = '${cityname}' and a.Create_Date = '${date}' and a.Create_Time = (select max(w.Create_Time) from weatherInfo w where w.CityName = '${cityname}' and w.Create_Date = '${date}' )`;
-            weatherJson = await test(sql);
+            weatherJson = await query(sql);
             Content = weatherJson[0].Content
-            const room4 = bot.bot.Room.find('多多');
-            (await room4).say('早上好~');
+            const room4 = await bot.bot.Room.find('多多');
+            
+            await room4.say('早上好~');
             await sleep(1000);   //暂停1秒
-            sql = ``;
 
-            (await room4).say('下面是天气预报');
+            await room4.say('下面是天气预报');
             await sleep(1000);   //暂停1秒
-            sql = ``;
 
-            (await room4).say(Content);
+            await room4.say(Content);
 
     });
 }
@@ -102,14 +97,30 @@ const onToWeatherRemind = async () => {
 
 
 /**
- * @desc 打卡提醒
+ * @desc 上班打卡提醒
  */
- const onToClockReminded = async () => {
-  const timer = "00 00 18 * * *";
-  setSchedule('ClockReminded', timer, async () => {
+ const onToGoToWorkClockReminded = async () => {
+  const timer = "00 30 08 * * *";
+  setSchedule('GoToWorkClockReminded', timer, async () => {
  
-          const room2 = bot.bot.Room.find('打卡');
-          (await room2).say('已经到了下班时间，请不要忘记打卡。')
+          const room2 = await bot.bot.Room.find('打卡');
+          await room2.say('已经到了上班时间，请不要忘记打卡。')
+
+  });
+}
+
+
+
+
+/**
+ * @desc 下班打卡提醒
+ */
+ const onToAfterWorkClockReminded = async () => {
+  const timer = "00 00 18 * * *";
+  setSchedule('AfterWorkClockReminded', timer, async () => {
+ 
+          const room2 = await bot.bot.Room.find('打卡');
+          await room2.say('已经到了下班时间，请不要忘记打卡。')
 
   });
 }
@@ -120,7 +131,8 @@ async function stop() {
 
 export {
   onToWeatherRemind,
-  onToClockReminded,
+  onToGoToWorkClockReminded,
+  onToAfterWorkClockReminded,
   cancelSchedule,
   stop
 };

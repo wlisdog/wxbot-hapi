@@ -9,9 +9,10 @@ import {
     Room
 } from 'wechaty';
 import dayjs from 'dayjs';
+import {sleep} from './sleepThread.js';
 import bot  from '../../index.js'; // 获取微信实例
 import commonInfoUrl  from './common.js'; 
-import test from './testMySQL.js';
+import query from './testMySQL.js';
 const rootListArr = [ "YHL.", "Srecko."] 
 
 const onReply = (message) => {
@@ -38,23 +39,31 @@ async function onReplyMessage(message) {
     const text = message.text();
 
     if (room !== null ){
-        if(/好/.test(text)){
-            const messageJson = await test();
-            room.say(new UrlLink(commonInfoUrl))
-        }
         if(/天气/.test(text)){
-            const sql = `select Content from weatherInfo where CityName = '北京' and Create_Date = '2021-12-10'`;
-            const weatherJson = await test(sql);
+            let cityname = '北京';
+            let date = dayjs().format('YYYY-MM-DD')
+
+            const sql = `select Content from weatherInfo where CityName = '${cityname}' and Create_Date = '${date}'`;
+            const weatherJson = await query(sql);
             const Content = weatherJson[0].Content
-            room.say(Content) 
+            room.say(Content)
+            await sleep(1000);   //暂停1秒
+            room.say('目前只能查询北京当天凌晨6点左右天气情况，无法查询实时天气，相关接口正在进行中，如有疑问请联系以下人员')
+            await sleep(1000);   //暂停1秒
+            const contactCard = await bot.bot.Contact.find({name: 'Srecko.'}) 
+            if (!contactCard) {
+                 console.log('not found') 
+                return 
+            } 
+            await room.say(contactCard) 
         }
-        if(/日期/.test(text)){
-            console.log(dayjs().format('YYYY-MM-DD')) 
-            room.say(dayjs().format('YYYY-MM-DD'))
+        if(/时间/.test(text)){
+            console.log(dayjs().format('YYYY-MM-DD HH:mm:ss')) 
+            room.say(dayjs().format('YYYY-MM-DD HH:mm:ss'))
         }
         if(/图/.test(text)){
             const sql = 'select MediaId from imagemessage order by rand() limit 1';
-            const messageJson = await test(sql);
+            const messageJson = await query(sql);
             const mediaId = messageJson[0].MediaId
             console.log(mediaId)
             const fileBox = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/${mediaId}.jpg`);

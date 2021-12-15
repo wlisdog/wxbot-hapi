@@ -6,7 +6,7 @@
 import mysql from 'mysql';
 
 
-async function test(sql) {
+async function query(sql) {
 
     return new Promise((resolve,reject)=>{
         
@@ -30,4 +30,4 @@ async function test(sql) {
     });
     
 }
-export default test;
+export default query;

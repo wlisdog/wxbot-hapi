@@ -1,10 +1,15 @@
 import {
     Wechaty,
 } from 'wechaty';
+import query from './src/events/testMySQL.js';
 import { onScan, onLogin, onMessage, onReply }  from './src/events/index.js';
 import { PuppetPadlocal }  from "wechaty-puppet-padlocal";
+const sql = `select SysVarValue from sysvar where SysVarName = 'wxbottoken' and SysVarType = '1'`;
+const tokenJson = await query(sql);
+const wxbottoken = tokenJson[0].SysVarValue
+
 const puppet = new PuppetPadlocal({
-    token: 'puppet_padlocal_648624986a864fd48630614a8e37ba31',
+    token: wxbottoken,
   });
 const bot = new Wechaty({
     name: 'ding',
