@@ -8,7 +8,7 @@ import bot from "../../../index.js";
 import query from '../../../src/events/testMySQL.js';
 import {sleep} from '../../../src/events/sleepThread.js';
 
-//其他规则见 https://www.npmjs.com/package/node-schedule
+//其他规则见  
 // 规则参数讲解    *代表通配符
 // *  *  *  *  *  *
 // ┬  ┬  ┬  ┬  ┬  ┬
@@ -76,6 +76,19 @@ const onToWeatherRemind = async () => {
             await room3.say(Content);
             await sleep(1000);   //暂停1秒
 
+            const room5 = await bot.bot.Room.find('收购BAT蓝天计划之技术交流群');
+
+            await room5.say('早上好~');
+            await sleep(1000);   //暂停1秒
+            
+            await room5.say('下面是天气预报');
+            await sleep(1000);   //暂停1秒
+
+            await room5.say(Content);
+            await sleep(1000);   //暂停1秒
+
+            
+
             cityname = '长沙';
             sql = `select a.Content from weatherInfo a where a.CityName = '${cityname}' and a.Create_Date = '${date}' and a.Create_Time = (select max(w.Create_Time) from weatherInfo w where w.CityName = '${cityname}' and w.Create_Date = '${date}' )`;
             weatherJson = await query(sql);
@@ -100,7 +113,7 @@ const onToWeatherRemind = async () => {
  * @desc 上班打卡提醒
  */
  const onToGoToWorkClockReminded = async () => {
-  const timer = "00 30 08 * * *";
+  const timer = "00 30 08 * * 1-5";
   setSchedule('GoToWorkClockReminded', timer, async () => {
  
           const room2 = await bot.bot.Room.find('打卡');
@@ -116,7 +129,7 @@ const onToWeatherRemind = async () => {
  * @desc 下班打卡提醒
  */
  const onToAfterWorkClockReminded = async () => {
-  const timer = "00 00 18 * * *";
+  const timer = "00 00 18 * * 1-5";
   setSchedule('AfterWorkClockReminded', timer, async () => {
  
           const room2 = await bot.bot.Room.find('打卡');

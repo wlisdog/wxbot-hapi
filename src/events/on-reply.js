@@ -12,10 +12,12 @@ import dayjs from 'dayjs';
 import {sleep} from './sleepThread.js';
 import bot  from '../../index.js'; // 获取微信实例
 import commonInfoUrl  from './common.js'; 
+import getWeather from './getWeatherInfo.js';
 import query from './testMySQL.js';
 const rootListArr = [ "YHL.", "Srecko."] 
 
 const onReply = (message) => {
+    
     if (message.self()) return;
     onMessageInit(message);
 };
@@ -39,26 +41,26 @@ async function onReplyMessage(message) {
     const text = message.text();
 
     if (room !== null ){
-        if(/天气/.test(text)){
-            let cityname = '北京';
-            let date = dayjs().format('YYYY-MM-DD')
+        // if(/天气/.test(text)){
+        //     let cityname = '北京';
+        //     let date = dayjs().format('YYYY-MM-DD')
 
-            const sql = `select Content from weatherInfo where CityName = '${cityname}' and Create_Date = '${date}'`;
-            const weatherJson = await query(sql);
-            const Content = weatherJson[0].Content
-            room.say(Content)
-            await sleep(1000);   //暂停1秒
-            room.say('目前只能查询北京当天凌晨6点左右天气情况，无法查询实时天气，相关接口正在进行中，如有疑问请联系以下人员')
-            await sleep(1000);   //暂停1秒
-            const contactCard = await bot.bot.Contact.find({name: 'Srecko.'}) 
-            if (!contactCard) {
-                 console.log('not found') 
-                return 
-            } 
-            await room.say(contactCard) 
-        }
+        //     const sql = `select Content from weatherInfo where CityName = '${cityname}' and Create_Date = '${date}'`;
+        //     const weatherJson = await query(sql);
+        //     const Content = weatherJson[0].Content
+        //     room.say(Content)
+        //     await sleep(1000);   //暂停1秒
+        //     room.say('目前只能查询北京当天凌晨6点左右天气情况，无法查询实时天气，相关接口正在进行中，如有疑问请联系以下人员')
+        //     await sleep(1000);   //暂停1秒
+        //     const contactCard = await bot.bot.Contact.find({name: 'Srecko.'}) 
+        //     if (!contactCard) {
+        //          console.log('not found') 
+        //         return 
+        //     } 
+        //     await room.say(contactCard) 
+        // }
         if(/时间/.test(text)){
-            console.log(dayjs().format('YYYY-MM-DD HH:mm:ss')) 
+            console.log(dayjs().format('YYYY-MM-DD HH:mm:ss SSS')) 
             room.say(dayjs().format('YYYY-MM-DD HH:mm:ss'))
         }
         if(/图/.test(text)){
@@ -77,6 +79,18 @@ async function onReplyMessage(message) {
             } 
             await room.say(contactCard) 
         }
-    }
+        if(/天气/.test(text)){
+            const city = text.substring(0, text.length - 2);
+            console.log(city)
+            const weatherMessage = await getWeather(city);
+            const weatherInfo = eval('/'+city+'/')
+            if(weatherInfo.test(weatherMessage.return)){
+                room.say(weatherMessage.return) 
+            }else{
+                room.say('未查到需要的天气记录，天气查询格式应为: XX天气    XX为所查询的城市名称')
+            }
+            
+        }
+    }   
 }
 export default onReply;
