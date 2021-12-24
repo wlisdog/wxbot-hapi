@@ -12,7 +12,7 @@ import dayjs from 'dayjs';
 import {sleep} from './sleepThread.js';
 import bot  from '../../index.js'; // 获取微信实例
 import commonInfoUrl  from './common.js'; 
-import getWeather from './getWeatherInfo.js';
+import {getWeather,getImage} from './webServiceLink.js';
 import query from './testMySQL.js';
 const rootListArr = [ "YHL.", "Srecko."] 
 
@@ -28,6 +28,7 @@ const onReply = (message) => {
  async function onMessageInit(message) {
     let room = message.room();
     await onReplyMessage(message);
+    await onEmojiToImage(message);
     if (!room) {
         return;
     }
@@ -92,5 +93,34 @@ async function onReplyMessage(message) {
             
         }
     }   
+}
+
+
+/**
+ * 表情包转换图片路径
+ * @param message {Class} 消息实例
+ * 
+ */
+ async function onEmojiToImage(message) {
+    // console.log(message)
+    let return_text = message.text().replace(/\s/g,"").replace(/&amp;/g, "&");
+    let url;
+    if (return_text.indexOf('emoji') > -1 ) {
+        url = return_text.split('cdnurl=')[1].split('designerid')[0];
+        url = url.substring(1, url.length - 1);
+        console.log(url)
+        await message.say('正在转换表情包，请稍候(目前预览仅支持静态表情包，动态表情包如需预览保存请点击链接)');
+        const fileName = await getImage(url);
+        
+        await sleep(1000);   //暂停1秒
+        const mediaId = fileName.return
+        console.log(mediaId)
+        const fileBox = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/${mediaId}.gif`);
+        const fileUrl = 'http://ljh.yangdagang.com/pictures/'+mediaId+'.gif';
+        await message.say(fileBox);
+        await sleep(1000);   //暂停1秒
+        await message.say(fileUrl);
+        
+    }
 }
 export default onReply;

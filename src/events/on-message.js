@@ -29,10 +29,10 @@ async function onMessageInit(message) {
     if (room) {
         return;
     }
-    await onRoomComeAndGo(message);
+    // await onRoomComeAndGo(message);
     // await onMyGirlMessage(message);
-    await onEmojiToImageFlag(message);
-    await onEmojiToImage(message);
+    // await onEmojiToImageFlag(message);
+    // await onEmojiToImage(message);
     // await onFunctionList(message);
 }
 

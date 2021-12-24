@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import bot from "../../../index.js";
 import query from '../../../src/events/testMySQL.js';
 import {sleep} from '../../../src/events/sleepThread.js';
+const rootListArr = [ "Srecko."] 
 
 //其他规则见  
 // 规则参数讲解    *代表通配符
@@ -138,6 +139,39 @@ const onToWeatherRemind = async () => {
   });
 }
 
+
+
+
+
+/**
+ * @desc 上班打卡提醒
+ */
+ const onToGoToWorkClock2Reminded = async () => {
+  const timer = "00 00 08 * * 1-5";
+  setSchedule('GoToWorkClockReminded', timer, async () => {
+ 
+          const room2 = await bot.bot.Room.find('多多');
+          await room2.say('已经到了上班时间，请不要忘记打卡。')
+
+  });
+}
+
+
+
+
+/**
+ * @desc 下班打卡提醒
+ */
+ const onToAfterWorkClock2Reminded = async () => {
+  const timer = "00 30 17 * * 1-5";
+  setSchedule('AfterWorkClockReminded', timer, async () => {
+ 
+          const room2 = await bot.bot.Room.find('多多');
+          await room2.say('已经到了下班时间，请不要忘记打卡。')
+
+  });
+}
+
 async function stop() {
   await sleep(1000);   //暂停1秒
 }
@@ -146,6 +180,8 @@ export {
   onToWeatherRemind,
   onToGoToWorkClockReminded,
   onToAfterWorkClockReminded,
+  onToGoToWorkClock2Reminded,
+  onToAfterWorkClock2Reminded,
   cancelSchedule,
   stop
 };
