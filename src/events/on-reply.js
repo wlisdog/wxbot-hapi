@@ -3,7 +3,7 @@
  * @desc: 回复消息
  * @date 2021-12-1
  */
-import {
+ import {
     UrlLink,
     FileBox,
     Room
@@ -42,24 +42,6 @@ async function onReplyMessage(message) {
     const text = message.text();
 
     if (room !== null ){
-        // if(/天气/.test(text)){
-        //     let cityname = '北京';
-        //     let date = dayjs().format('YYYY-MM-DD')
-
-        //     const sql = `select Content from weatherInfo where CityName = '${cityname}' and Create_Date = '${date}'`;
-        //     const weatherJson = await query(sql);
-        //     const Content = weatherJson[0].Content
-        //     room.say(Content)
-        //     await sleep(1000);   //暂停1秒
-        //     room.say('目前只能查询北京当天凌晨6点左右天气情况，无法查询实时天气，相关接口正在进行中，如有疑问请联系以下人员')
-        //     await sleep(1000);   //暂停1秒
-        //     const contactCard = await bot.bot.Contact.find({name: 'Srecko.'}) 
-        //     if (!contactCard) {
-        //          console.log('not found') 
-        //         return 
-        //     } 
-        //     await room.say(contactCard) 
-        // }
         if(/时间/.test(text)){
             console.log(dayjs().format('YYYY-MM-DD HH:mm:ss SSS')) 
             room.say(dayjs().format('YYYY-MM-DD HH:mm:ss'))
@@ -92,6 +74,32 @@ async function onReplyMessage(message) {
             }
             
         }
+         if(/原神角色/.test(text)){
+            const role1 = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/a1.jpg`);
+            room.say(role1) 
+            await sleep(1000);
+            const role2 = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/a2.jpg`);
+            room.say(role2) 
+         }
+
+         // 当需要测试时再打开
+         if(/测试/.test(text)){
+            // const nowdate = dayjs().format('YYYY-MM-DD')
+            // console.log(nowdate)
+
+            // const sql = "select * from dateinfo where date = '"+nowdate+"'";
+            // const messageJson = await query(sql);
+            // console.log(messageJson)
+            // let remind = "今天是"+messageJson[0].dateformat+"，"+messageJson[0].weekformat+"";
+            // if(messageJson[0].holiday != "" && messageJson[0].holiday != null){
+            //     remind = remind +"，" + "今天是" + messageJson[0].holiday
+            // }
+            // if(messageJson[0].greet != ""  && messageJson[0].greet != null){
+            //     remind = remind +"，" + messageJson[0].greet
+            // }
+            // console.log(remind)
+            // room.say(remind)
+         }
     }   
 }
 

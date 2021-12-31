@@ -5,8 +5,9 @@
 import schedule from 'node-schedule';
 import dayjs from 'dayjs';
 import bot from "../../../index.js";
-import query from '../../../src/events/testMySQL.js';
 import {sleep} from '../../../src/events/sleepThread.js';
+import query from '../../../src/events/testMySQL.js';
+import {getWeather,getImage} from '../../../src/events/webServiceLink.js';
 const rootListArr = [ "Srecko."] 
 
 //其他规则见  
@@ -42,67 +43,113 @@ function cancelSchedule(name) {
 
 
 /**
- * @desc 天气提醒
+ * @desc 每日提醒
  */
 const onToWeatherRemind = async () => {
     const timer = "00 00 07 * * *";
     setSchedule('WeatherRemind', timer, async () => {
-            console.log('进入定时任务') 
-            let cityname = '北京';
+            console.log('进入每日提醒定时任务') 
+
+            // 根据日期形成
+            const nowdate = dayjs().format('YYYY-MM-DD')
             
-            let date = dayjs().format('YYYY-MM-DD')
-            let sql = `select a.Content from weatherInfo a where a.CityName = '${cityname}' and a.Create_Date = '${date}' and a.Create_Time = (select max(w.Create_Time) from weatherInfo w where w.CityName = '${cityname}' and w.Create_Date = '${date}' )`;
-            let weatherJson = await query(sql);
+            const sql = "select * from dateinfo where date = '"+nowdate+"'";
+            const messageJson = await query(sql);
+            let remind = "今天是"+messageJson[0].dateformat+"，"+messageJson[0].weekformat+"";
+            if(messageJson[0].holiday != "" && messageJson[0].holiday != null){
+                remind = remind +"，" + "今天是" + messageJson[0].holiday
+            }
+            if(messageJson[0].greet != ""  && messageJson[0].greet != null){
+                remind = remind +"，" + messageJson[0].greet
+            }
+            console.log(remind)
 
-            let Content = weatherJson[0].Content
-            const room2 = await bot.bot.Room.find('打卡');
+            let city = '北京';
+            let weatherMessage = await getWeather(city);
+            let weatherInfo = eval('/'+city+'/')
+            if(weatherInfo.test(weatherMessage.return)){
+              const room2 = await bot.bot.Room.find('打卡');
 
-            await room2.say('早上好~')
-            await sleep(1000);   //暂停1秒
+              await room2.say('早上好~');
+              await sleep(1000);
 
-            await room2.say('下面是天气预报');
-            await sleep(1000);   //暂停1秒
+              await room2.say(remind);
+              await sleep(1000);
+  
+              await room2.say('下面是天气预报');
+              await sleep(1000);   
+  
+              await room2.say(weatherMessage.return);
+              await sleep(1000);   
+   
+              const room3 = await bot.bot.Room.find('11111');
+              
+  
+              await room3.say('早上好~');
+              await sleep(1000); 
+              
+              await room3.say(remind);
+              await sleep(1000);
+              
+              await room3.say('下面是天气预报');
+              await sleep(1000);   
+  
+              await room3.say(weatherMessage.return);
+              await sleep(1000);   
+  
+              const room5 = await bot.bot.Room.find('收购BAT蓝天计划之技术交流群');
+  
+              await room5.say('早上好~');
+              await sleep(1000);
 
-            await room2.say(Content);
-            await sleep(1000);   //暂停1秒
- 
-            const room3 = await bot.bot.Room.find('11111');
+              await room5.say(remind);
+              await sleep(1000);   
+              
+              await room5.say('下面是天气预报');
+              await sleep(1000);   
+  
+              await room5.say(weatherMessage.return);
+              await sleep(1000);   
+              
+              const room6 = await bot.bot.Room.find('朵朵');
+  
+              await room6.say('早上好~');
+              await sleep(1000);
 
-            await room3.say('早上好~');
-            await sleep(1000);   //暂停1秒
+              await room6.say(remind);
+              await sleep(1000);   
+              
+              await room6.say('下面是天气预报');
+              await sleep(1000);   
+  
+              await room6.say(weatherMessage.return);
+              await sleep(1000);  
+
+            }else{
+                // 天气信息不匹配 打印信息
+                console.log(weatherInfo)
+            }
+            city = '长沙';
+            weatherInfo = eval('/'+city+'/')
+            weatherMessage = await getWeather(city);
+            if(weatherInfo.test(weatherMessage.return)){
+              const room4 = await bot.bot.Room.find('多多');
             
-            await room3.say('下面是天气预报');
-            await sleep(1000);   //暂停1秒
+              await room4.say('早上好~');
+              await sleep(1000);   
 
-            await room3.say(Content);
-            await sleep(1000);   //暂停1秒
+              await room4.say(remind);
+              await sleep(1000); 
+  
+              await room4.say('下面是天气预报');
+              await sleep(1000);   
+  
+              await room4.say(weatherMessage.return);
+            }else{
+              // 天气信息不匹配 打印信息
+              console.log(weatherInfo)
+          }
 
-            const room5 = await bot.bot.Room.find('收购BAT蓝天计划之技术交流群');
-
-            await room5.say('早上好~');
-            await sleep(1000);   //暂停1秒
-            
-            await room5.say('下面是天气预报');
-            await sleep(1000);   //暂停1秒
-
-            await room5.say(Content);
-            await sleep(1000);   //暂停1秒
-
-            
-
-            cityname = '长沙';
-            sql = `select a.Content from weatherInfo a where a.CityName = '${cityname}' and a.Create_Date = '${date}' and a.Create_Time = (select max(w.Create_Time) from weatherInfo w where w.CityName = '${cityname}' and w.Create_Date = '${date}' )`;
-            weatherJson = await query(sql);
-            Content = weatherJson[0].Content
-            const room4 = await bot.bot.Room.find('多多');
-            
-            await room4.say('早上好~');
-            await sleep(1000);   //暂停1秒
-
-            await room4.say('下面是天气预报');
-            await sleep(1000);   //暂停1秒
-
-            await room4.say(Content);
 
     });
 }
