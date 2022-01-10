@@ -70,60 +70,77 @@ const onToWeatherRemind = async () => {
             if(weatherInfo.test(weatherMessage.return)){
               const room2 = await bot.bot.Room.find('打卡');
 
-              await room2.say('早上好~');
-              await sleep(1000);
+              if(room2){
+                await room2.say('早上好~');
+                await sleep(1000);
+  
+                await room2.say(remind);
+                await sleep(1000);
+    
+                await room2.say('下面是天气预报');
+                await sleep(1000);   
+    
+                await room2.say(weatherMessage.return);
+                await sleep(1000);   
+              }
 
-              await room2.say(remind);
-              await sleep(1000);
-  
-              await room2.say('下面是天气预报');
-              await sleep(1000);   
-  
-              await room2.say(weatherMessage.return);
-              await sleep(1000);   
+
    
               const room3 = await bot.bot.Room.find('11111');
+
+              if(room3){
+                                
+                await room3.say('早上好~');
+                await sleep(1000); 
+              
+                await room3.say(remind);
+                await sleep(1000);
+              
+                await room3.say('下面是天气预报');
+                await sleep(1000);   
+  
+                await room3.say(weatherMessage.return);
+                await sleep(1000); 
+  
+              }
               
   
-              await room3.say('早上好~');
-              await sleep(1000); 
-              
-              await room3.say(remind);
-              await sleep(1000);
-              
-              await room3.say('下面是天气预报');
-              await sleep(1000);   
-  
-              await room3.say(weatherMessage.return);
-              await sleep(1000);   
   
               const room5 = await bot.bot.Room.find('收购BAT蓝天计划之技术交流群');
-  
-              await room5.say('早上好~');
-              await sleep(1000);
 
-              await room5.say(remind);
-              await sleep(1000);   
-              
-              await room5.say('下面是天气预报');
-              await sleep(1000);   
+              if(room5){
+
+                await room5.say('早上好~');
+                await sleep(1000);
   
-              await room5.say(weatherMessage.return);
-              await sleep(1000);   
+                await room5.say(remind);
+                await sleep(1000);   
+                
+                await room5.say('下面是天气预报');
+                await sleep(1000);   
+    
+                await room5.say(weatherMessage.return);
+                await sleep(1000);   
+              }
+  
               
               const room6 = await bot.bot.Room.find('朵朵');
   
-              await room6.say('早上好~');
-              await sleep(1000);
+              if(room6){
 
-              await room6.say(remind);
-              await sleep(1000);   
-              
-              await room6.say('下面是天气预报');
-              await sleep(1000);   
+                await room6.say('早上好~');
+                await sleep(1000);
   
-              await room6.say(weatherMessage.return);
-              await sleep(1000);  
+                await room6.say(remind);
+                await sleep(1000);   
+                
+                await room6.say('下面是天气预报');
+                await sleep(1000);   
+    
+                await room6.say(weatherMessage.return);
+                await sleep(1000);  
+              }
+
 
             }else{
                 // 天气信息不匹配 打印信息
@@ -135,16 +152,20 @@ const onToWeatherRemind = async () => {
             if(weatherInfo.test(weatherMessage.return)){
               const room4 = await bot.bot.Room.find('多多');
             
-              await room4.say('早上好~');
-              await sleep(1000);   
+              if(room4){
+              
+                await room4.say('早上好~');
+                await sleep(1000);   
 
-              await room4.say(remind);
-              await sleep(1000); 
+                await room4.say(remind);
+                await sleep(1000); 
   
-              await room4.say('下面是天气预报');
-              await sleep(1000);   
+                await room4.say('下面是天气预报');
+                await sleep(1000);   
   
-              await room4.say(weatherMessage.return);
+                await room4.say(weatherMessage.return);
+              }
+              
             }else{
               // 天气信息不匹配 打印信息
               console.log(weatherInfo)
