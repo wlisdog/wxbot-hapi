@@ -1,7 +1,7 @@
 const commonInfoUrl = {
-    description : '这里是百度首页',
-    thumbnailUrl: 'http://emoji.qpic.cn/wx_emoji/EruiaYDEOxicicgMuu3JTSdO969XcgkZGZVu2OPJ0sucRvDautUOHlt66ezlVPFSAES/',
-    tltle       : '请求',
-    url         : 'www.baidu.com',
+    description : '米游社原神页面',
+    thumbnailUrl: 'http://ljh.yangdagang.com/pictures/Genshin.jpg',
+    tltle       : '米游社',
+    url         : 'https://bbs.mihoyo.com/ys/strategy/?bbs_presentation_style=no_header',
 };
 export default commonInfoUrl;

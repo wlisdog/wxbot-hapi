@@ -81,24 +81,22 @@ async function onReplyMessage(message) {
             const role2 = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/a2.jpg`);
             room.say(role2) 
          }
+         if(/原神材料/.test(text)){
+            room.say(new UrlLink(commonInfoUrl))
+         }
 
          // 当需要测试时再打开
          if(/测试/.test(text)){
-            // const nowdate = dayjs().format('YYYY-MM-DD')
-            // console.log(nowdate)
 
-            // const sql = "select * from dateinfo where date = '"+nowdate+"'";
-            // const messageJson = await query(sql);
-            // console.log(messageJson)
-            // let remind = "今天是"+messageJson[0].dateformat+"，"+messageJson[0].weekformat+"";
-            // if(messageJson[0].holiday != "" && messageJson[0].holiday != null){
-            //     remind = remind +"，" + "今天是" + messageJson[0].holiday
-            // }
-            // if(messageJson[0].greet != ""  && messageJson[0].greet != null){
-            //     remind = remind +"，" + messageJson[0].greet
-            // }
-            // console.log(remind)
-            // room.say(remind)
+            const room6 = await bot.bot.Room.find('朵朵1');
+  
+            console.log(room6)
+
+            if(room6){
+                await room6.say('进入这里');
+            }
+            console.log('结束')
+
          }
     }   
 }
