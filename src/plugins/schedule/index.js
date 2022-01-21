@@ -41,6 +41,23 @@ function cancelSchedule(name) {
 }
 
 
+/**
+ * @desc 提醒公共方法
+ */
+ const onToPublicmethodReminded = async () => {
+  // const timer = "00 30 08 * * 1-5";
+  const date = new Date(2022,0,14,9,56,30);
+  setSchedule('lex1', date, async () => {
+ 
+          const room2 = await bot.bot.Room.find('朵朵');
+          if(room2){
+            await room2.say('定时提醒')
+          }
+
+  });
+}
+
+
 
 /**
  * @desc 每日提醒
@@ -246,6 +263,7 @@ async function stop() {
 
 export {
   onToWeatherRemind,
+  onToPublicmethodReminded,
   onToGoToWorkClockReminded,
   onToAfterWorkClockReminded,
   onToGoToWorkClock2Reminded,

@@ -1,6 +1,6 @@
 /**
  * @author Srecko
- * @desc: 回复消息
+ * @desc: 回复消息(群聊)
  * @date 2021-12-1
  */
  import {
@@ -14,6 +14,8 @@ import bot  from '../../index.js'; // 获取微信实例
 import commonInfoUrl  from './common.js'; 
 import {getWeather,getImage} from './webServiceLink.js';
 import query from './testMySQL.js';
+import {onToPublicmethodReminded } from "../plugins/schedule/index.js";
+
 const rootListArr = [ "YHL.", "Srecko."] 
 
 const onReply = (message) => {
@@ -27,11 +29,32 @@ const onReply = (message) => {
  */
  async function onMessageInit(message) {
     let room = message.room();
-    await onReplyMessage(message);
-    await onEmojiToImage(message);
+    
+    // 不是群消息直接返回
     if (!room) {
         return;
     }
+    // 判断机器人回复功能是否开启
+    const id = room.id
+    const contact = message.talker().name()
+    const purviewsql = "select totalpurview from roompurview where roomid = '"+id+"'";
+    const totalpurviewJson = await query(purviewsql);
+    let totalpurview
+    if(!totalpurviewJson.length == 0){
+        totalpurview = totalpurviewJson[0].totalpurview
+    }else{
+        totalpurview = 'N'
+    }
+    
+    // 不是超级权限者并且没有配置群权限直接返回
+    if(!rootListArr.includes(contact) && totalpurview == 'N'){
+        return;
+    }
+    
+    await onReplyMessage(message);
+    await onEmojiToImage(message);
+
+
 }
 
 /**
@@ -84,18 +107,48 @@ async function onReplyMessage(message) {
          if(/原神材料/.test(text)){
             room.say(new UrlLink(commonInfoUrl))
          }
+         if(/定时/.test(text)){
+            await room.sync()
+            const contact = await bot.bot.Contact.find({id: 'wxid_5jk7jmh8qufd22'}) 
+            const contact2 = await bot.bot.Contact.find({name: 'Srecko.'}) 
+            const topic = room.topic();
+            console.log(topic)
+            await contact.sync()
+            const members = await room.memberAll() 
+            console.log(contact)
+            console.log(contact2)
+            const someMembers = members.slice(0, 3);
+            const room2 = await bot.bot.Room.find({id: '19811144802@chatroom'}) 
+            await onToPublicmethodReminded();
+            room.say('定时配置成功',contact,contact2)
+            room2.say('定时配置成功')
+         }
+         if(/id/.test(text)){
+            const id = room.id
+            console.log(id)
+            const topic = await room.topic()
+            console.log(`room topic is : ${topic}`)
+            room.say(id)
+            await sleep(1000);
+            room.say(`${topic}`)
+         }
+
 
          // 当需要测试时再打开
          if(/测试/.test(text)){
 
-            const room6 = await bot.bot.Room.find('朵朵1');
+            // const room6 = await bot.bot.Room.find('朵朵1');
   
-            console.log(room6)
+            // console.log(room6)
 
-            if(room6){
-                await room6.say('进入这里');
-            }
-            console.log('结束')
+            // if(room6){
+            //     await room6.say('进入这里');
+            // }
+            // console.log('结束')
+
+
+
+
 
          }
     }   
