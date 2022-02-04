@@ -34,6 +34,9 @@ const onReply = (message) => {
     if (!room) {
         return;
     }
+    // 目前先对关键字全部功能放行，限制表情包
+    await onReplyMessage(message);
+
     // 判断机器人回复功能是否开启
     const id = room.id
     const contact = message.talker().name()
@@ -50,11 +53,7 @@ const onReply = (message) => {
     if(!rootListArr.includes(contact) && totalpurview == 'N'){
         return;
     }
-    
-    await onReplyMessage(message);
     await onEmojiToImage(message);
-
-
 }
 
 /**
@@ -145,11 +144,6 @@ async function onReplyMessage(message) {
             //     await room6.say('进入这里');
             // }
             // console.log('结束')
-
-
-
-
-
          }
     }   
 }
