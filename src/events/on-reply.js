@@ -16,7 +16,7 @@ import {getWeather,getImage} from './webServiceLink.js';
 import query from './testMySQL.js';
 import {onToPublicmethodReminded } from "../plugins/schedule/index.js";
 
-const rootListArr = [ "YHL.", "Srecko."] 
+const rootListArr = [ "YHL.", "S"] 
 
 const onReply = (message) => {
     
@@ -122,7 +122,7 @@ async function onReplyMessage(message) {
             room.say('定时配置成功',contact,contact2)
             room2.say('定时配置成功')
          }
-         if(/id/.test(text)){
+         if(/房间id/.test(text)){
             const id = room.id
             console.log(id)
             const topic = await room.topic()
