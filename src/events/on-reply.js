@@ -64,11 +64,11 @@ async function onReplyMessage(message) {
     const text = message.text();
 
     if (room !== null ){
-        if(/时间/.test(text)){
+        if(/当前时间/.test(text)){
             console.log(dayjs().format('YYYY-MM-DD HH:mm:ss SSS')) 
             room.say(dayjs().format('YYYY-MM-DD HH:mm:ss'))
         }
-        if(/图/.test(text)){
+        if(/随机图片/.test(text)){
             const sql = 'select MediaId from imagemessage order by rand() limit 1';
             const messageJson = await query(sql);
             const mediaId = messageJson[0].MediaId
@@ -106,7 +106,7 @@ async function onReplyMessage(message) {
          if(/原神材料/.test(text)){
             room.say(new UrlLink(commonInfoUrl))
          }
-         if(/定时/.test(text)){
+         if(/定时任务/.test(text)){
             await room.sync()
             const contact = await bot.bot.Contact.find({id: 'wxid_5jk7jmh8qufd22'}) 
             const contact2 = await bot.bot.Contact.find({name: 'Srecko.'}) 
