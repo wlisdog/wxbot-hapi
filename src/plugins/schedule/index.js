@@ -203,7 +203,7 @@ const onToWeatherRemind = async () => {
   setSchedule('GoToWorkClockReminded', timer, async () => {
  
           const room2 = await bot.bot.Room.find('打卡');
-          await room2.say('已经到了上班时间，请不要忘记打卡。')
+          await room2.say('即将要到上班时间，请不要忘记打卡。')
 
   });
 }
@@ -236,7 +236,7 @@ const onToWeatherRemind = async () => {
   setSchedule('GoToWorkClockReminded', timer, async () => {
  
           const room2 = await bot.bot.Room.find('多多');
-          await room2.say('已经到了上班时间，请不要忘记打卡。')
+          await room2.say('即将要到上班时间，请不要忘记打卡。')
 
   });
 }
@@ -248,11 +248,46 @@ const onToWeatherRemind = async () => {
  * @desc 下班打卡提醒
  */
  const onToAfterWorkClock2Reminded = async () => {
-  const timer = "00 30 17 * * 1-5";
+  const timer = "00 00 18 * * 1-5";
   setSchedule('AfterWorkClockReminded', timer, async () => {
  
           const room2 = await bot.bot.Room.find('多多');
           await room2.say('已经到了下班时间，请不要忘记打卡。')
+
+  });
+}
+
+
+
+/**
+ * @desc 上班打卡提醒
+ */
+ const onToGoToWorkClock3Reminded = async () => {
+  const timer = "00 55 08 * * 1-5";
+  setSchedule('GoToWorkClockReminded', timer, async () => {
+ 
+          const room2 = await bot.bot.Room.find('朵朵');
+          await room2.sync()
+          const members = await room2.member({name: '齐荼'}) 
+          await room2.say('即将要到上班时间，请不要忘记打卡。',members)
+
+  });
+}
+
+
+
+
+/**
+ * @desc 下班打卡提醒
+ */
+ const onToAfterWorkClock3Reminded = async () => {
+  const timer = "00 00 18 * * 1-5";
+  setSchedule('AfterWorkClockReminded', timer, async () => {
+ 
+          const room2 = await bot.bot.Room.find('朵朵');
+          await room2.sync()
+          const members = await room2.member({name: '齐荼'}) 
+          await room2.say('已经到了下班时间，请不要忘记打卡。',members)
 
   });
 }
@@ -268,6 +303,8 @@ export {
   onToAfterWorkClockReminded,
   onToGoToWorkClock2Reminded,
   onToAfterWorkClock2Reminded,
+  onToGoToWorkClock3Reminded,
+  onToAfterWorkClock3Reminded,
   cancelSchedule,
   stop
 };
