@@ -40,7 +40,27 @@ async function getImage(httpurl) {
         });
     });
 }
+
+
+async function getTimer(message) {
+    var args = { arg0: message};
+    return new Promise((resolve,reject)=>{
+        soap.createClient(url, function(err, client) {
+            client.getTimer(args, function(err, result) {
+                if(err){
+                    console.log('query error')
+                    reject()
+                }else{
+                    // console.log(result);
+                    resolve(result)
+                }
+            });
+            
+        });
+    });
+}
 export  {
     getWeather,
-    getImage
+    getImage,
+    getTimer
   };

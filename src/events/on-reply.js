@@ -12,7 +12,7 @@ import dayjs from 'dayjs';
 import {sleep} from './sleepThread.js';
 import bot  from '../../index.js'; // 获取微信实例
 import commonInfoUrl  from './common.js'; 
-import {getWeather,getImage} from './webServiceLink.js';
+import {getWeather,getImage,getTimer} from './webServiceLink.js';
 import query from './testMySQL.js';
 import {onToPublicmethodReminded } from "../plugins/schedule/index.js";
 
@@ -108,19 +108,16 @@ async function onReplyMessage(message) {
          }
          if(/定时任务/.test(text)){
             await room.sync()
-            const contact = await bot.bot.Contact.find({id: 'wxid_5jk7jmh8qufd22'}) 
-            const contact2 = await bot.bot.Contact.find({name: 'Srecko.'}) 
-            const topic = room.topic();
-            console.log(topic)
-            await contact.sync()
-            const members = await room.memberAll() 
-            console.log(contact)
-            console.log(contact2)
-            const someMembers = members.slice(0, 3);
-            const room2 = await bot.bot.Room.find({id: '19811144802@chatroom'}) 
-            await onToPublicmethodReminded();
-            room.say('定时配置成功',contact,contact2)
-            room2.say('定时配置成功')
+            const contact3 = message.talker().name()
+            const id = room.id
+
+            const content = contact3 + '|' + id + '|' +text
+            console.log(content)
+            const timestamp = await getTimer(content); 
+            
+            await onToPublicmethodReminded(timestamp.return);
+            const members = await room.member({name: contact3}) 
+            room.say('您的定时任务已经配置成功',members)
          }
          if(/房间id/.test(text)){
             const id = room.id

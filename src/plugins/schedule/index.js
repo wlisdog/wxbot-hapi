@@ -44,20 +44,35 @@ function cancelSchedule(name) {
 /**
  * @desc 提醒公共方法
  */
- const onToPublicmethodReminded = async () => {
+ const onToPublicmethodReminded = async (timestamp) => {
+  
+  const sql = "select UserName,RoomId,Schedule,Message from timerremindinfo where TimeStamp = '"+timestamp+"'";
+  const messageJson = await query(sql);
+  const userName = messageJson[0].UserName
+  const roomId = messageJson[0].RoomId
+  const schedule = messageJson[0].Schedule
+  const message = messageJson[0].Message
+  const scheduleJson = schedule.split(',');
+  const year = scheduleJson[0]
+  const month = scheduleJson[1]
+  const day = scheduleJson[2]
+  const hours = scheduleJson[3]
+  const minutes = scheduleJson[4]
+  const seconds = scheduleJson[5]
+
+
   // const timer = "00 30 08 * * 1-5";
-  const date = new Date(2022,0,14,9,56,30);
-  setSchedule('lex1', date, async () => {
+  const date = new Date(year,month,day,hours,minutes,seconds);
+  setSchedule(timestamp, date, async () => {
  
-          const room2 = await bot.bot.Room.find('朵朵');
-          if(room2){
-            await room2.say('定时提醒')
+          const room = await bot.bot.Room.find({id: roomId}) 
+          const members = await room.member({name: userName}) 
+          if(room){
+            await room.say(message,members)
           }
 
   });
 }
-
-
 
 /**
  * @desc 每日提醒
