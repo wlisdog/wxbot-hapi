@@ -102,6 +102,9 @@ async function onReplyMessage(message) {
             await sleep(1000);
             const role2 = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/a2.jpg`);
             room.say(role2) 
+            await sleep(1000);
+            const role3 = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/a3.jpg`);
+            room.say(role3) 
          }
          if(/原神材料/.test(text)){
             room.say(new UrlLink(commonInfoUrl))
@@ -152,7 +155,7 @@ async function onReplyMessage(message) {
  * 
  */
  async function onEmojiToImage(message) {
-    // console.log(message)
+    console.log(message)
     let return_text = message.text().replace(/\s/g,"").replace(/&amp;/g, "&");
     let url;
     if (return_text.indexOf('emoji') > -1 ) {
