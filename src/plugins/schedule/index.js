@@ -60,7 +60,6 @@ function cancelSchedule(name) {
   const minutes = scheduleJson[4]
   const seconds = scheduleJson[5]
 
-
   // const timer = "00 30 08 * * 1-5";
   const date = new Date(year,month,day,hours,minutes,seconds);
   setSchedule(timestamp, date, async () => {
@@ -75,7 +74,21 @@ function cancelSchedule(name) {
 }
 
 /**
- * @desc 每日提醒
+ * @desc 重启项目加载所有未提醒内容
+ */
+ const onToRestartReminded = async () => {
+  const date = dayjs().format('YYYY-MM-DD')
+  const time = dayjs().format('HH:mm:ss')
+
+  const sql = "select TimeStamp from timerremindinfo where Remind_Date >= '"+date+"' and Remind_Time >= '"+time+"'";
+  const messageJson = await query(sql);
+  
+  messageJson.forEach((val) => {onToPublicmethodReminded(val.TimeStamp)})
+
+}
+
+/**
+ * @desc 每日早晨问候
  */
 const onToWeatherRemind = async () => {
     const timer = "00 00 07 * * *";
@@ -207,9 +220,6 @@ const onToWeatherRemind = async () => {
     });
 }
 
-
-
-
 /**
  * @desc 上班打卡提醒
  */
@@ -312,6 +322,7 @@ async function stop() {
 }
 
 export {
+  onToRestartReminded,
   onToWeatherRemind,
   onToPublicmethodReminded,
   onToGoToWorkClockReminded,

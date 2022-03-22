@@ -155,19 +155,16 @@ async function onReplyMessage(message) {
  * 
  */
  async function onEmojiToImage(message) {
-    console.log(message)
     let return_text = message.text().replace(/\s/g,"").replace(/&amp;/g, "&");
     let url;
     if (return_text.indexOf('emoji') > -1 ) {
         url = return_text.split('cdnurl=')[1].split('designerid')[0];
         url = url.substring(1, url.length - 1);
-        console.log(url)
         await message.say('正在转换表情包，请稍候(目前预览仅支持静态表情包，动态表情包如需预览保存请点击链接)');
         const fileName = await getImage(url);
         
         await sleep(1000);   //暂停1秒
         const mediaId = fileName.return
-        console.log(mediaId)
         const fileBox = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/${mediaId}.gif`);
         const fileUrl = 'http://ljh.yangdagang.com/pictures/'+mediaId+'.gif';
         await message.say(fileBox);
