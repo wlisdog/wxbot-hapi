@@ -131,19 +131,35 @@ async function onReplyMessage(message) {
             await sleep(1000);
             room.say(`${topic}`)
          }
+         if(/git/.test(text)){
+            const id = `
+            git pull origin main
+            git add .
+            git commit -m ""
+            git push -u origin master
+            
+            清除本地缓存： git rm -r --cached .
+            撤销commit及add :  git reset --mixed HEAD^
+            撤销commit：  git reset --soft HEAD^
+            
+            git branch
+            git list
+            git status
+            git checkout -b 分支名
+            `
+            console.log(id)
+            room.say(id)
+            await sleep(1000);
+         }
+
 
 
          // 当需要测试时再打开
          if(/测试/.test(text)){
 
-            // const room6 = await bot.bot.Room.find('朵朵1');
-  
-            // console.log(room6)
-
-            // if(room6){
-            //     await room6.say('进入这里');
-            // }
-            // console.log('结束')
+            // const role1 = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/Docker.doc`);
+            // room.say(role1) 
+            // await sleep(1000);
          }
     }   
 }

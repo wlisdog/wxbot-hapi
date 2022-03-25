@@ -96,8 +96,11 @@ const onToWeatherRemind = async () => {
             console.log('进入每日提醒定时任务') 
 
             // 根据日期形成
+            const day = dayjs().format('DD')
+
             const nowdate = dayjs().format('YYYY-MM-DD')
-            
+
+            // 构造提醒内容
             const sql = "select * from dateinfo where date = '"+nowdate+"'";
             const messageJson = await query(sql);
             let remind = "今天是"+messageJson[0].dateformat+"，"+messageJson[0].weekformat+"";
@@ -107,115 +110,40 @@ const onToWeatherRemind = async () => {
             if(messageJson[0].greet != ""  && messageJson[0].greet != null){
                 remind = remind +"，" + messageJson[0].greet
             }
-            console.log(remind)
 
             let city = '北京';
             let weatherMessage = await getWeather(city);
             let weatherInfo = eval('/'+city+'/')
-            if(weatherInfo.test(weatherMessage.return)){
-              const room2 = await bot.bot.Room.find('打卡');
 
+            const weathersql = "select (@rownum:=@rownum+1) as row,roomid from (select @rownum :=0) r,roompurview where weatherremind = 'Y'";
+            const weathermessageJson = await query(weathersql);
+  
+            weathermessageJson.forEach(async(val) => {
+              await sleep(1000*val.row);
+              const room2 = await bot.bot.Room.find({id: val.roomid}); 
               if(room2){
                 await room2.say('早上好~');
                 await sleep(1000);
-  
+    
                 await room2.say(remind);
                 await sleep(1000);
-    
+
+              if(day === '25'){
+                await room2.say('每月25日天气系统维护，无法提供天气信息。由此给您带来的不便我们深表歉意，感谢您长期以来的支持。');
+                await sleep(1000);
+              }else if(weatherInfo.test(weatherMessage.return)){
+                await room2.say('天气系统维护，无法提供天气信息。由此给您带来的不便我们深表歉意，感谢您长期以来的支持。');
+                await sleep(1000);
+              }
+              else{
                 await room2.say('下面是天气预报');
                 await sleep(1000);   
-    
+      
                 await room2.say(weatherMessage.return);
-                await sleep(1000);   
-              }
-
-
-   
-              const room3 = await bot.bot.Room.find('11111');
-
-              if(room3){
-                                
-                await room3.say('早上好~');
                 await sleep(1000); 
-              
-                await room3.say(remind);
-                await sleep(1000);
-              
-                await room3.say('下面是天气预报');
-                await sleep(1000);   
-  
-                await room3.say(weatherMessage.return);
-                await sleep(1000); 
-  
               }
-              
-  
-  
-              const room5 = await bot.bot.Room.find('收购BAT蓝天计划之技术交流群');
-
-              if(room5){
-
-                await room5.say('早上好~');
-                await sleep(1000);
-  
-                await room5.say(remind);
-                await sleep(1000);   
-                
-                await room5.say('下面是天气预报');
-                await sleep(1000);   
-    
-                await room5.say(weatherMessage.return);
-                await sleep(1000);   
-              }
-  
-              
-              const room6 = await bot.bot.Room.find('朵朵');
-  
-              if(room6){
-
-                await room6.say('早上好~');
-                await sleep(1000);
-  
-                await room6.say(remind);
-                await sleep(1000);   
-                
-                await room6.say('下面是天气预报');
-                await sleep(1000);   
-    
-                await room6.say(weatherMessage.return);
-                await sleep(1000);  
-              }
-
-
-            }else{
-                // 天气信息不匹配 打印信息
-                console.log(weatherInfo)
             }
-            city = '长沙';
-            weatherInfo = eval('/'+city+'/')
-            weatherMessage = await getWeather(city);
-            if(weatherInfo.test(weatherMessage.return)){
-              const room4 = await bot.bot.Room.find('多多');
-            
-              if(room4){
-              
-                await room4.say('早上好~');
-                await sleep(1000);   
-
-                await room4.say(remind);
-                await sleep(1000); 
-  
-                await room4.say('下面是天气预报');
-                await sleep(1000);   
-  
-                await room4.say(weatherMessage.return);
-              }
-              
-            }else{
-              // 天气信息不匹配 打印信息
-              console.log(weatherInfo)
-          }
-
+          })
 
     });
 }
