@@ -132,15 +132,15 @@ const onToWeatherRemind = async () => {
                 await room2.say('每月25日天气系统维护，无法提供天气信息。由此给您带来的不便我们深表歉意，感谢您长期以来的支持。');
                 await sleep(1000);
               }else if(weatherInfo.test(weatherMessage.return)){
-                await room2.say('天气系统维护，无法提供天气信息。由此给您带来的不便我们深表歉意，感谢您长期以来的支持。');
-                await sleep(1000);
-              }
-              else{
                 await room2.say('下面是天气预报');
                 await sleep(1000);   
       
                 await room2.say(weatherMessage.return);
                 await sleep(1000); 
+              }
+              else{
+                await room2.say('天气系统维护，无法提供天气信息。由此给您带来的不便我们深表歉意，感谢您长期以来的支持。');
+                await sleep(1000);
               }
             }
           })
