@@ -201,7 +201,7 @@ const onToWeatherRemind = async () => {
  * @desc 下班打卡提醒
  */
  const onToAfterWorkClock2Reminded = async () => {
-  const timer = "00 00 18 * * 1-5";
+  const timer = "00 30 17 * * 1-5";
   setSchedule('AfterWorkClockReminded', timer, async () => {
  
           const room2 = await bot.bot.Room.find('多多');
@@ -245,6 +245,23 @@ const onToWeatherRemind = async () => {
   });
 }
 
+
+/**
+ * @desc 每日定时提醒
+ */
+ const onToEveryDayReminded = async () => {
+  const timer = "00 40 20 * * *";
+  setSchedule('EveryDayReminded', timer, async () => {
+ 
+          const room2 = await bot.bot.Room.find('朵朵');
+          await room2.sync()
+          const members = await room2.member({name: '齐荼'}) 
+          await room2.say('收葫芦。',members)
+
+  });
+}
+
+
 async function stop() {
   await sleep(1000);   //暂停1秒
 }
@@ -259,6 +276,7 @@ export {
   onToAfterWorkClock2Reminded,
   onToGoToWorkClock3Reminded,
   onToAfterWorkClock3Reminded,
+  onToEveryDayReminded,
   cancelSchedule,
   stop
 };
