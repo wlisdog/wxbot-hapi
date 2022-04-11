@@ -13,6 +13,7 @@ import {sleep} from './sleepThread.js';
 import bot  from '../../index.js'; // 获取微信实例
 import commonInfoUrl  from './common.js'; 
 import {getWeather,getImage,getTimer} from './webServiceLink.js';
+import {getDaily,getDemon,getRandom,getRequire} from './JX3Interface.js';
 import query from './testMySQL.js';
 import {onToPublicmethodReminded } from "../plugins/schedule/index.js";
 
@@ -96,6 +97,64 @@ async function onReplyMessage(message) {
             }
             
         }
+        if(/日常/.test(text)){
+            const server = '破阵子';
+            const next = '0';
+            const dailyMessage = await getDaily(server,next);
+            const dailyData = dailyMessage.data.data
+            room.say(dailyData.date) 
+            await sleep(1000);
+            room.say(dailyData.week) 
+            await sleep(1000);
+            room.say(dailyData.war) 
+            await sleep(1000);
+            room.say(dailyData.battle) 
+            await sleep(1000);
+            room.say(dailyData.public) 
+            await sleep(1000);
+            room.say(dailyData.camp) 
+            await sleep(1000);
+            
+        }
+        if(/金价/.test(text)){
+            const server = '破阵子';
+            const demonMessage = await getDemon(server);
+            const demonData = demonMessage.data.data
+            console.log(demonData)
+            demonData.forEach(async(val) => {
+                const date = new Date(val.time* 1000)
+                const time = date.getFullYear() + "-" + (date.getMonth() < 10 ? '0' + (date.getMonth()+1) : (date.getMonth()+1)) + "-" + (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) ;
+                room.say("时间："+time+"\n"+
+                "服务器："+val.server+"\n"+
+                "万宝楼："+val.wanbaolou+"\n"+
+                "贴吧："+val.tieba+"\n"+
+                "dd373："+val.dd373+"\n"+
+                "uu898："+val.uu898+"\n"+
+                "5173："+val['5173']+"\n"+
+                "7881："+val['7881']) 
+                await sleep(1000);
+            })
+        }
+        if(/随机骚话/.test(text)){
+            const randomMessage = await getRandom();
+            const randomData = randomMessage.data.data
+            room.say(randomData.text) 
+        }
+        if(/奇遇前置/.test(text)){
+            const name = text.substring(0, text.length - 4);
+            const requireMessage = await getRequire(name);
+            const requireData = requireMessage.data.data
+            room.say(requireData.name) 
+            await sleep(1000);
+            room.say(requireData.means) 
+            await sleep(1000);
+            room.say(requireData.require) 
+            await sleep(1000);
+            room.say(requireData.reward) 
+            await sleep(1000);
+            room.say(requireData.upload) 
+            await sleep(1000);
+        }
          if(/原神角色/.test(text)){
             const role1 = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/a1.jpg`);
             room.say(role1) 
@@ -151,6 +210,7 @@ async function onReplyMessage(message) {
             room.say(id)
             await sleep(1000);
          }
+         
 
 
 

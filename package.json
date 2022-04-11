@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@nestjs/typeorm": "^8.0.2",
+    "axios": "^0.26.1",
     "dayjs": "^1.10.7",
     "fs": "^0.0.1-security",
     "hot-import": "^0.2.14",

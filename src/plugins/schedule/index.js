@@ -152,7 +152,7 @@ const onToWeatherRemind = async () => {
  * @desc 上班打卡提醒
  */
  const onToGoToWorkClockReminded = async () => {
-  const timer = "00 30 08 * * 1-5";
+  const timer = "00 50 08 * * 1-5";
   setSchedule('GoToWorkClockReminded', timer, async () => {
  
           const room2 = await bot.bot.Room.find('打卡');
