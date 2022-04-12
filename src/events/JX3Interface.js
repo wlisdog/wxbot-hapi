@@ -1,14 +1,22 @@
 import axios from 'axios';
 
-var url = 'https://www.jx3api.com/app/daily';
-var url2 = 'https://www.jx3api.com/app/demon';
-var url3 = 'https://www.jx3api.com/app/random';
-var url4 = 'https://www.jx3api.com/app/require';
+/**
+ * @author Srecko
+ * @desc: 剑网3接口调用
+ * @date 2022-4-11  
+ * 凌霄揽胜，雪藏英才。秉坚忍之心，行国士之事，不问青史，不计浮沉。
+ */
 
 
+/**
+ * 日常任务
+ * @desc 今天、明天、后天等的日常任务，七点自动更新。
+ * @param server 用于返回目标服务器当天美人图，默认空（不返回美人图）
+ * @param next 用于查询第几天日常，可选范围：0-3，默认值0(当天)。
+ */
 async function getDaily(server,next) {
     return new Promise((resolve,reject)=>{
-        axios.post(url, {
+        axios.post('https://www.jx3api.com/app/daily', {
             server: server,
             next: next
           })
@@ -22,9 +30,14 @@ async function getDaily(server,next) {
     });
 }
 
+/**
+ * 金价比例
+ * @desc 检查近十天的金价比例，数据仅供参考。
+ * @param server 用于返回目标服务器平均金价比例，当输入空参数时，返回全部服务器，默认空（返回全部服务器比例）。
+ */
 async function getDemon(server) {
     return new Promise((resolve,reject)=>{
-        axios.post(url2, {
+        axios.post('https://www.jx3api.com/app/demon', {
             server: server,
           })
           .then(function (response) {
@@ -37,9 +50,13 @@ async function getDemon(server) {
     });
 }
 
+/**
+ * 随机骚话
+ * @desc 召唤一条骚话。
+ */
 async function getRandom() {
     return new Promise((resolve,reject)=>{
-        axios.post(url3, {
+        axios.post('https://www.jx3api.com/app/random', {
           })
           .then(function (response) {
             resolve(response)
@@ -51,10 +68,118 @@ async function getRandom() {
     });
 }
 
+/**
+ * 奇遇前置
+ * @desc 搜索目标奇遇的前置要求。
+ * @param name 输入奇遇名称，搜索前置要求。
+ */
 async function getRequire(name) {
     return new Promise((resolve,reject)=>{
-        axios.post(url4, {
+        axios.post('https://www.jx3api.com/app/require', {
             name: name,
+          })
+          .then(function (response) {
+            resolve(response)
+          })
+          .catch(function (error) {
+            console.log(error);
+            reject()
+          });
+    });
+}
+
+
+/**
+ * 奇遇攻略
+ * @desc 搜索某个奇遇的任务攻略。
+ * @param name 输入奇遇名称，搜索详细任务流程，不支持搜索宠物攻略。
+ */
+ async function getStrategy(name) {
+    return new Promise((resolve,reject)=>{
+        axios.post('https://www.jx3api.com/app/strategy', {
+            name: name
+          })
+          .then(function (response) {
+            resolve(response)
+          })
+          .catch(function (error) {
+            console.log(error);
+            reject()
+          });
+    });
+}
+
+
+/**
+ * 物价信息
+ * @desc 搜索黑市的外观物品最新价格。
+ * @param name 输入物品/外观名称，搜索黑市最新价格。
+ */
+ async function getPrice(name) {
+    return new Promise((resolve,reject)=>{
+        axios.post('https://www.jx3api.com/app/price', {
+            name: name
+          })
+          .then(function (response) {
+            resolve(response)
+          })
+          .catch(function (error) {
+            console.log(error);
+            reject()
+          });
+    });
+}
+
+
+/**
+ * 价格信息
+ * @desc 搜索黑市的外观物品最新价格，数据来源于废牛助手。
+ * @param name 输入物品/外观名称，搜索黑市最新价格。
+ */
+ async function getPrices(name) {
+    return new Promise((resolve,reject)=>{
+        axios.post('https://www.jx3api.com/app/prices', {
+            name: name
+          })
+          .then(function (response) {
+            resolve(response)
+          })
+          .catch(function (error) {
+            console.log(error);
+            reject()
+          });
+    });
+}
+
+/**
+ * 推荐奇穴
+ * @desc 推荐当前赛季所使用的奇穴。
+ * @param name 输入心法名称，搜索当前赛季热门奇穴。
+ */
+ async function getQixue(name) {
+    return new Promise((resolve,reject)=>{
+        axios.post('https://www.jx3api.com/app/qixue', {
+            name: name
+          })
+          .then(function (response) {
+            resolve(response)
+          })
+          .catch(function (error) {
+            console.log(error);
+            reject()
+          });
+    });
+}
+
+/**
+ * 查宏命令
+ * @desc 推荐当前赛季热门的宏命令。
+ * @param name 输入心法名称，搜索当前赛季热门奇穴。
+ */
+ async function getMacro(name) {
+    return new Promise((resolve,reject)=>{
+        axios.post('https://www.jx3api.com/app/macro', {
+            name: name
           })
           .then(function (response) {
             resolve(response)
@@ -70,5 +195,10 @@ export  {
     getDaily,
     getDemon,
     getRandom,
-    getRequire
+    getRequire,
+    getStrategy,
+    getPrice,
+    getPrices,
+    getQixue,
+    getMacro
   };

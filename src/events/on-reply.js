@@ -13,7 +13,7 @@ import {sleep} from './sleepThread.js';
 import bot  from '../../index.js'; // 获取微信实例
 import commonInfoUrl  from './common.js'; 
 import {getWeather,getImage,getTimer} from './webServiceLink.js';
-import {getDaily,getDemon,getRandom,getRequire} from './JX3Interface.js';
+import {getDaily,getDemon,getRandom,getRequire,getStrategy,getPrice,getPrices,getQixue,getMacro} from './JX3Interface.js';
 import query from './testMySQL.js';
 import {onToPublicmethodReminded } from "../plugins/schedule/index.js";
 
@@ -144,16 +144,85 @@ async function onReplyMessage(message) {
             const name = text.substring(0, text.length - 4);
             const requireMessage = await getRequire(name);
             const requireData = requireMessage.data.data
-            room.say(requireData.name) 
+            room.say('奇遇名称：'+requireData.name+"\n"+
+            '前置条件：'+requireData.means+"\n"+
+            '触发方式：'+requireData.require+"\n"+
+            '奇遇奖励：'+requireData.reward+"\n"+
+            '一图流：'+requireData.upload) 
             await sleep(1000);
-            room.say(requireData.means) 
+        }
+        if(/奇遇攻略/.test(text)){
+            const name = text.substring(0, text.length - 4);
+            const requireMessage = await getStrategy(name);
+            const requireData = requireMessage.data.data
+            room.say('奇遇名称：'+requireData.name+"\n"+
+            '奇遇类别：'+requireData.class+"\n"+
+            '奇遇等级：'+requireData.level+"\n"+
+            '攻略内容：'+requireData.url+"\n"+
+            '更新时间：'+requireData.time) 
             await sleep(1000);
-            room.say(requireData.require) 
+        }
+        if(/物价信息/.test(text)){
+            const name = text.substring(0, text.length - 4);
+            const requireMessage = await getPrice(name);
+            const requireData = requireMessage.data.data
+            room.say('商品名称：'+requireData.name+"\n"+
+            '商品介绍：'+requireData.info+"\n"+
+            '图片信息：'+requireData.upload) 
+            const requireResultData = requireData.data
             await sleep(1000);
-            room.say(requireData.reward) 
+            // 数组中1为双线一区，所以直接取其值
+            requireResultData[0].forEach(async(val) => {
+                room.say("大区："+val.zone+"\n"+
+                "服务器："+val.server+"\n"+
+                "类别："+val.class+"\n"+
+                "更新时间："+val.date+"\n"+
+                "收付方式："+val.sale+"\n"+
+                "金额："+val.value) 
+                await sleep(1000);
+            })
+        }
+
+        if(/价格信息/.test(text)){
+            const name = text.substring(0, text.length - 4);
+            const requireMessage = await getPrices(name);
+            const requireData = requireMessage.data.data
+            // 数组中1为双线一区，所以直接取其值
+            requireData[2].forEach(async(val) => {
+                room.say("服务器："+val.fwq+"\n"+
+                "物品名称："+val.wpmc+"\n"+
+                "物品别称："+val.wpqc+"\n"+
+                "部位："+val.lb+"\n"+
+                "细类："+val.xl+"\n"+
+                "价格："+val.jg+"\n"+
+                "报价时间："+val.bjsj+"\n"+
+                "方式："+val.lx) 
+                await sleep(1000);
+            })
+        }
+
+        if(/推荐奇穴/.test(text)){
+            const name = text.substring(0, text.length - 4);
+            const requireMessage = await getQixue(name);
+            const requireData = requireMessage.data.data
+            room.say('心法名称：'+requireData.name+"\n"+
+            '战场任务：'+requireData.master+"\n"+
+            '龙门绝境：'+requireData.longmen+"\n"+
+            'pvp：'+requireData.battle+"\n"+
+            '更新时间：'+requireData.time) 
             await sleep(1000);
-            room.say(requireData.upload) 
+        
+        }
+        if(/查宏命令/.test(text)){
+            const name = text.substring(0, text.length - 4);
+            const requireMessage = await getMacro(name);
+            const requireData = requireMessage.data.data
+            room.say('心法名称：'+requireData.name+"\n"+
+            '奇穴：'+requireData.qixue+"\n"+
+            '宏命令：'+requireData.macro+"\n"+
+            '更新时间：'+requireData.time) 
             await sleep(1000);
+        
         }
          if(/原神角色/.test(text)){
             const role1 = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/a1.jpg`);
