@@ -13,7 +13,8 @@ import {sleep} from './sleepThread.js';
 import bot  from '../../index.js'; // 获取微信实例
 import commonInfoUrl  from './common.js'; 
 import {getWeather,getImage,getTimer} from './webServiceLink.js';
-import {getDaily,getDemon,getRandom,getRequire,getStrategy,getPrice,getPrices,getQixue,getMacro} from './JX3Interface.js';
+import {getDaily,getDemon,getRandom,getReRandom,getRequire,getStrategy,getPrice,getPrices,getQixue,getMacro,getHeighten} from './JX3Interface.js';
+// import {getreply} from './nlpchatInterface.js';
 import query from './testMySQL.js';
 import {onToPublicmethodReminded } from "../plugins/schedule/index.js";
 
@@ -101,18 +102,35 @@ async function onReplyMessage(message) {
             const server = '破阵子';
             const next = '0';
             const dailyMessage = await getDaily(server,next);
+            console.log(dailyMessage.data.data.team)
             const dailyData = dailyMessage.data.data
-            room.say(dailyData.date) 
-            await sleep(1000);
-            room.say(dailyData.week) 
-            await sleep(1000);
-            room.say(dailyData.war) 
-            await sleep(1000);
-            room.say(dailyData.battle) 
-            await sleep(1000);
-            room.say(dailyData.public) 
-            await sleep(1000);
-            room.say(dailyData.camp) 
+            const groupData = dailyData.team
+            const sql = "select * from dateinfo where date = '"+dailyData.date+"'";
+            const messageJson = await query(sql);
+
+            if(dailyData.draw){
+                room.say("大侠好！~( ´∀` )~"+"\n"+
+                    "今天是"+messageJson[0].dateformat+"，"+"星期"+dailyData.week+"\n"+
+                    "【秘境大战】 "+dailyData.war+"\n"+
+                    "【今日战场】 "+dailyData.battle+"\n"+
+                    "【公共任务】 "+dailyData.public+"\n"+
+                    "【阵营任务】 "+dailyData.camp+"\n"+
+                    "【美人画像】 "+dailyData.draw+"\n"+"\n"+
+                    "【武林通鉴·公共任务】 "+"\n"+groupData[0]+"\n"+
+                    "【武林通鉴·秘境任务】 "+"\n"+groupData[1]+"\n"+
+                    "【武林通鉴·团队秘境】 "+"\n"+groupData[2]) 
+            }else{
+                room.say("大侠好！~( ´∀` )~"+"\n"+
+                    "今天是"+messageJson[0].dateformat+"，"+"星期"+dailyData.week+"\n"+
+                    "【秘境大战】 "+dailyData.war+"\n"+
+                    "【今日战场】 "+dailyData.battle+"\n"+
+                    "【公共任务】 "+dailyData.public+"\n"+
+                    "【阵营任务】 "+dailyData.camp+"\n"+"\n"+
+                    "【武林通鉴·公共任务】 "+"\n"+groupData[0]+"\n"+
+                    "【武林通鉴·秘境任务】 "+"\n"+groupData[1]+"\n"+
+                    "【武林通鉴·团队秘境】 "+"\n"+groupData[2]) 
+            }
+            
             await sleep(1000);
             
         }
@@ -120,28 +138,40 @@ async function onReplyMessage(message) {
             const server = '破阵子';
             const demonMessage = await getDemon(server);
             const demonData = demonMessage.data.data
-            console.log(demonData)
             demonData.forEach(async(val) => {
+
                 const date = new Date(val.time* 1000)
                 const time = date.getFullYear() + "-" + (date.getMonth() < 10 ? '0' + (date.getMonth()+1) : (date.getMonth()+1)) + "-" + (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) ;
-                room.say("时间："+time+"\n"+
-                "服务器："+val.server+"\n"+
-                "万宝楼："+val.wanbaolou+"\n"+
-                "贴吧："+val.tieba+"\n"+
-                "dd373："+val.dd373+"\n"+
-                "uu898："+val.uu898+"\n"+
-                "5173："+val['5173']+"\n"+
-                "7881："+val['7881']) 
-                await sleep(1000);
+                
+                const today = dayjs().format('YYYY-MM-DD');
+
+                const daybetween = dayjs(today).diff(time,'day') 
+                if(daybetween === 1){
+                    await room.say("时间："+time+"\n"+
+                    "服务器："+val.server+"\n"+
+                    "万宝楼："+val.wanbaolou+"\n"+
+                    "贴吧："+val.tieba+"\n"+
+                    "dd373："+val.dd373+"\n"+
+                    "uu898："+val.uu898+"\n"+
+                    "5173："+val['5173']+"\n"+
+                    "7881："+val['7881']) 
+                 }
+                
+                
             })
         }
-        if(/随机骚话/.test(text)){
+        if(/骚话/.test(text)){
             const randomMessage = await getRandom();
             const randomData = randomMessage.data.data
             room.say(randomData.text) 
         }
-        if(/奇遇前置/.test(text)){
-            const name = text.substring(0, text.length - 4);
+        if(/舔狗/.test(text)){
+            const randomMessage = await getReRandom();
+            const randomData = randomMessage.data.data
+            room.say(randomData.text) 
+        }
+        if(/前置 /.test(text)){
+            const name = text.substring(3);
             const requireMessage = await getRequire(name);
             const requireData = requireMessage.data.data
             room.say('奇遇名称：'+requireData.name+"\n"+
@@ -151,8 +181,8 @@ async function onReplyMessage(message) {
             '一图流：'+requireData.upload) 
             await sleep(1000);
         }
-        if(/奇遇攻略/.test(text)){
-            const name = text.substring(0, text.length - 4);
+        if(/攻略 /.test(text)){
+            const name = text.substring(3);
             const requireMessage = await getStrategy(name);
             const requireData = requireMessage.data.data
             room.say('奇遇名称：'+requireData.name+"\n"+
@@ -162,33 +192,39 @@ async function onReplyMessage(message) {
             '更新时间：'+requireData.time) 
             await sleep(1000);
         }
-        if(/物价信息/.test(text)){
-            const name = text.substring(0, text.length - 4);
+        if(/物价 /.test(text)){
+            const name = text.substring(3);
             const requireMessage = await getPrice(name);
             const requireData = requireMessage.data.data
             room.say('商品名称：'+requireData.name+"\n"+
             '商品介绍：'+requireData.info+"\n"+
             '图片信息：'+requireData.upload) 
             const requireResultData = requireData.data
+            
+            console.log(requireResultData)
             await sleep(1000);
-            // 数组中1为双线一区，所以直接取其值
-            requireResultData[0].forEach(async(val) => {
-                room.say("大区："+val.zone+"\n"+
-                "服务器："+val.server+"\n"+
-                "类别："+val.class+"\n"+
-                "更新时间："+val.date+"\n"+
-                "收付方式："+val.sale+"\n"+
-                "金额："+val.value) 
-                await sleep(1000);
+            // 数组中1为双线一区念破，所以直接取其值
+            requireResultData[1].forEach(async(val) => {
+                if(val.server === '破阵子'){
+                    room.say("大区："+val.zone+"\n"+
+                        "服务器："+val.server+"\n"+
+                        "类别："+val.class+"\n"+
+                        "更新时间："+val.date+"\n"+
+                        "收付方式："+val.sale+"\n"+
+                        "金额："+val.value) 
+                        await sleep(1000);
+                }
+                
             })
+            
         }
 
-        if(/价格信息/.test(text)){
-            const name = text.substring(0, text.length - 4);
+        if(/价格 /.test(text)){
+            const name = text.substring(3);
             const requireMessage = await getPrices(name);
             const requireData = requireMessage.data.data
             // 数组中1为双线一区，所以直接取其值
-            requireData[2].forEach(async(val) => {
+            requireData[1].forEach(async(val) => {
                 room.say("服务器："+val.fwq+"\n"+
                 "物品名称："+val.wpmc+"\n"+
                 "物品别称："+val.wpqc+"\n"+
@@ -201,8 +237,8 @@ async function onReplyMessage(message) {
             })
         }
 
-        if(/推荐奇穴/.test(text)){
-            const name = text.substring(0, text.length - 4);
+        if(/奇穴 /.test(text)){
+            const name = text.substring(3);
             const requireMessage = await getQixue(name);
             const requireData = requireMessage.data.data
             room.say('心法名称：'+requireData.name+"\n"+
@@ -213,8 +249,8 @@ async function onReplyMessage(message) {
             await sleep(1000);
         
         }
-        if(/查宏命令/.test(text)){
-            const name = text.substring(0, text.length - 4);
+        if(/宏 /.test(text)){
+            const name = text.substring(2);
             const requireMessage = await getMacro(name);
             const requireData = requireMessage.data.data
             room.say('心法名称：'+requireData.name+"\n"+
@@ -224,7 +260,36 @@ async function onReplyMessage(message) {
             await sleep(1000);
         
         }
-         if(/原神角色/.test(text)){
+        if(/小药 /.test(text)){
+            const name = text.substring(3);
+            const requireMessage = await getHeighten(name);
+            const requireData = requireMessage.data.data
+            room.say('心法名称：'+requireData.name+"\n"+
+            requireData.heighten_food+"\n"+
+            requireData.auxiliary_food+"\n"+
+            requireData.heighten_drug+"\n"+
+            requireData.auxiliary_drug) 
+            await sleep(1000);
+        
+        }
+        if(/材料 /.test(text)){
+            const name = text.substring(3);
+            const material = name.split(' ')[0]
+            const map = name.split(' ')[1]
+            const materialsql = "select code from basiscode where codetype = 'Material' and codename = '"+material+"'";
+            const materialJson = await query(materialsql);
+            const mapsql = "select code from basiscode where codetype = 'Map' and codename = '"+map+"'";
+            const mapJson = await query(mapsql);
+            console.log(materialJson[0].code)
+            console.log(mapJson[0].code)
+            const mediaId = materialJson[0].code + mapJson[0].code
+            console.log(mediaId)
+
+            const fileBox = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/aa${mediaId}.jpg`);
+            room.say(fileBox) 
+        
+        }
+        if(/原神角色/.test(text)){
             const role1 = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/a1.jpg`);
             room.say(role1) 
             await sleep(1000);
@@ -233,11 +298,14 @@ async function onReplyMessage(message) {
             await sleep(1000);
             const role3 = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/a3.jpg`);
             room.say(role3) 
-         }
-         if(/原神材料/.test(text)){
+        }
+        if(/原神材料/.test(text)){
             room.say(new UrlLink(commonInfoUrl))
+        }
+		if(/账号id/.test(text)){
+            room.say('19538887215')
          }
-         if(/定时任务/.test(text)){
+        if(/定时任务/.test(text)){
             await room.sync()
             const contact3 = message.talker().name()
             const id = room.id
@@ -249,8 +317,8 @@ async function onReplyMessage(message) {
             await onToPublicmethodReminded(timestamp.return);
             const members = await room.member({name: contact3}) 
             room.say('您的定时任务已经配置成功',members)
-         }
-         if(/房间id/.test(text)){
+        }
+        if(/房间id/.test(text)){
             const id = room.id
             console.log(id)
             const topic = await room.topic()
@@ -258,8 +326,8 @@ async function onReplyMessage(message) {
             room.say(id)
             await sleep(1000);
             room.say(`${topic}`)
-         }
-         if(/git/.test(text)){
+        }
+        if(/git/.test(text)){
             const id = `
             git pull origin main
             git add .
@@ -278,18 +346,43 @@ async function onReplyMessage(message) {
             console.log(id)
             room.say(id)
             await sleep(1000);
-         }
-         
+        }
+        // if(/@secret. /.test(text)){
+        //     const message = text.substring(9);
+        //     const reply = getreply(message)
+            
+        //     reply.then(
+        //         (data) => {
+        //           console.log(data);
+        //           room.say(data.Reply)
+        //         },
+        //         (err) => {
+        //           console.error("error", err);
+        //         }
+        //     )
+
+            
+        // } 
 
 
 
-         // 当需要测试时再打开
-         if(/测试/.test(text)){
+        // 当需要测试时再打开
+        if(/测试/.test(text)){
+            // const message = text.substring(9);
+            // const reply = getreply(message)
+            
+            // reply.then(
+            //     (data) => {
+            //       console.log(data);
+            //       room.say(data.Reply)
+            //     },
+            //     (err) => {
+            //       console.error("error", err);
+            //     }
+            // )
 
-            // const role1 = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/Docker.doc`);
-            // room.say(role1) 
-            // await sleep(1000);
-         }
+            
+        }
     }   
 }
 

@@ -191,6 +191,46 @@ async function getRequire(name) {
     });
 }
 
+/**
+ * 推荐小药
+ * @desc 推荐当前赛季所使用的小吃小药。
+ * @param name 输入心法名称，搜索当前赛季推荐小药。
+ */
+ async function getHeighten(name) {
+    return new Promise((resolve,reject)=>{
+        axios.post('https://www.jx3api.com/app/heighten', {
+            name: name
+          })
+          .then(function (response) {
+            resolve(response)
+          })
+          .catch(function (error) {
+            console.log(error);
+            reject()
+          });
+    });
+}
+
+
+/**
+ * 舔狗日志
+ * @desc 召唤一条舔狗日志。
+ */
+ async function getReRandom() {
+  return new Promise((resolve,reject)=>{
+      axios.post('https://www.jx3api.com/realize/random', {
+        
+        })
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          console.log(error);
+          reject()
+        });
+  });
+}
+
 export  {
     getDaily,
     getDemon,
@@ -200,5 +240,7 @@ export  {
     getPrice,
     getPrices,
     getQixue,
-    getMacro
+    getMacro,
+    getHeighten,
+    getReRandom
   };

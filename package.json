@@ -29,6 +29,7 @@
     "silly-datetime": "^0.1.2",
     "soap": "^0.43.0",
     "superagent": "^6.1.0",
+    "tencentcloud-sdk-nodejs": "^4.0.331",
     "typeorm": "^0.2.41"
   }
 }

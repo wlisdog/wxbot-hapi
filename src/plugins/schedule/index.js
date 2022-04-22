@@ -8,6 +8,7 @@ import bot from "../../../index.js";
 import {sleep} from '../../../src/events/sleepThread.js';
 import query from '../../../src/events/testMySQL.js';
 import {getWeather,getImage} from '../../../src/events/webServiceLink.js';
+import {getDaily} from '../../../src/events/JX3Interface.js';
 const rootListArr = [ "Srecko."] 
 
 //其他规则见  
@@ -198,6 +199,52 @@ const onToWeatherRemind = async () => {
 
 
 /**
+ * @desc 剑三每日日常推送
+ */
+ const onToGoDailyReminded = async () => {
+  const timer = "00 30 08 * * *";
+  setSchedule('onToGoDailyReminded', timer, async () => {
+
+
+          const room = await bot.bot.Room.find('朵朵');
+          const server = '破阵子';
+            const next = '0';
+            const dailyMessage = await getDaily(server,next);
+            console.log(dailyMessage.data.data.team)
+            const dailyData = dailyMessage.data.data
+            const groupData = dailyData.team
+            const sql = "select * from dateinfo where date = '"+dailyData.date+"'";
+            const messageJson = await query(sql);
+
+            if(dailyData.draw){
+                room.say("早上好啊！~( ´∀` )~"+"\n"+
+                    "今天是"+messageJson[0].dateformat+"，"+"星期"+dailyData.week+"\n"+
+                    "【秘境大战】 "+dailyData.war+"\n"+
+                    "【今日战场】 "+dailyData.battle+"\n"+
+                    "【公共任务】 "+dailyData.public+"\n"+
+                    "【阵营任务】 "+dailyData.camp+"\n"+
+                    "【美人画像】 "+dailyData.draw+"\n"+"\n"+
+                    "【武林通鉴·公共任务】 "+"\n"+groupData[0]+"\n"+
+                    "【武林通鉴·秘境任务】 "+"\n"+groupData[1]+"\n"+
+                    "【武林通鉴·团队秘境】 "+"\n"+groupData[2]) 
+            }else{
+                room.say("早上好啊！~( ´∀` )~"+"\n"+
+                    "今天是"+messageJson[0].dateformat+"，"+"星期"+dailyData.week+"\n"+
+                    "【秘境大战】 "+dailyData.war+"\n"+
+                    "【今日战场】 "+dailyData.battle+"\n"+
+                    "【公共任务】 "+dailyData.public+"\n"+
+                    "【阵营任务】 "+dailyData.camp+"\n"+"\n"+
+                    "【武林通鉴·公共任务】 "+"\n"+groupData[0]+"\n"+
+                    "【武林通鉴·秘境任务】 "+"\n"+groupData[1]+"\n"+
+                    "【武林通鉴·团队秘境】 "+"\n"+groupData[2]) 
+            }
+
+  });
+}
+
+
+
+/**
  * @desc 下班打卡提醒
  */
  const onToAfterWorkClock2Reminded = async () => {
@@ -250,7 +297,7 @@ const onToWeatherRemind = async () => {
  * @desc 每日定时提醒
  */
  const onToEveryDayReminded = async () => {
-  const timer = "00 40 20 * * *";
+  const timer = "00 10 21 * * *";
   setSchedule('EveryDayReminded', timer, async () => {
  
           const room2 = await bot.bot.Room.find('朵朵');
@@ -277,6 +324,7 @@ export {
   onToGoToWorkClock3Reminded,
   onToAfterWorkClock3Reminded,
   onToEveryDayReminded,
+  onToGoDailyReminded,
   cancelSchedule,
   stop
 };
