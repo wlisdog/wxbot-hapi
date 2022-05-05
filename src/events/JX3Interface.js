@@ -231,6 +231,47 @@ async function getRequire(name) {
   });
 }
 
+
+/**
+ * 官方资讯
+ * @desc 搜索官方近期发布的最新公告，新闻等相关内容。
+ * @param limit 限制返回数量，可选范围1-50。
+ */
+ async function getNews(limit) {
+  return new Promise((resolve,reject)=>{
+      axios.post('https://www.jx3api.com/app/news', {
+        limit: limit
+        })
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          console.log(error);
+          reject()
+        });
+  });
+}
+
+/**
+ * 开服检查
+ * @desc 检查目标服务器的开服状态，可用于开服监控。
+ * @param server 用于返回目标服务器开服状态，当输入空参数或错误参数时，返回全部服务器，默认空（返回全部服务器状态）。
+ */
+ async function getCheck(server) {
+  return new Promise((resolve,reject)=>{
+      axios.post('https://www.jx3api.com/app/check', {
+        server: server
+        })
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          console.log(error);
+          reject()
+        });
+  });
+}
+
 export  {
     getDaily,
     getDemon,
@@ -242,5 +283,7 @@ export  {
     getQixue,
     getMacro,
     getHeighten,
-    getReRandom
+    getReRandom,
+    getNews,
+    getCheck
   };

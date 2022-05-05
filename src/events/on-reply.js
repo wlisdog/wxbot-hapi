@@ -13,12 +13,12 @@ import {sleep} from './sleepThread.js';
 import bot  from '../../index.js'; // 获取微信实例
 import commonInfoUrl  from './common.js'; 
 import {getWeather,getImage,getTimer} from './webServiceLink.js';
-import {getDaily,getDemon,getRandom,getReRandom,getRequire,getStrategy,getPrice,getPrices,getQixue,getMacro,getHeighten} from './JX3Interface.js';
+import {getDaily,getDemon,getRandom,getReRandom,getRequire,getStrategy,getPrice,getPrices,getQixue,getMacro,getHeighten,getNews,getCheck} from './JX3Interface.js';
 // import {getreply} from './nlpchatInterface.js';
 import query from './testMySQL.js';
 import {onToPublicmethodReminded } from "../plugins/schedule/index.js";
 
-const rootListArr = [ "YHL.", "S"] 
+const rootListArr = [ "Y", "S"] 
 
 const onReply = (message) => {
     
@@ -98,7 +98,7 @@ async function onReplyMessage(message) {
             }
             
         }
-        if(/日常/.test(text)){
+        if(/日常 /.test(text)){
             const server = '破阵子';
             const next = '0';
             const dailyMessage = await getDaily(server,next);
@@ -174,22 +174,33 @@ async function onReplyMessage(message) {
             const name = text.substring(3);
             const requireMessage = await getRequire(name);
             const requireData = requireMessage.data.data
+            const fileName = await getImage(requireData.upload);
+        
+            const mediaId = fileName.return
+            const fileBox = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/${mediaId}.gif`);
+            const fileUrl = 'http://ljh.yangdagang.com/pictures/'+mediaId+'.gif';
             room.say('奇遇名称：'+requireData.name+"\n"+
             '前置条件：'+requireData.means+"\n"+
             '触发方式：'+requireData.require+"\n"+
-            '奇遇奖励：'+requireData.reward+"\n"+
-            '一图流：'+requireData.upload) 
+            '奇遇奖励：'+requireData.reward) 
+            room.say(fileBox)
             await sleep(1000);
         }
         if(/攻略 /.test(text)){
             const name = text.substring(3);
             const requireMessage = await getStrategy(name);
             const requireData = requireMessage.data.data
+            const fileName = await getImage(requireData.url);
+        
+            const mediaId = fileName.return
+            const fileBox = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/${mediaId}.gif`);
+            const fileUrl = 'http://ljh.yangdagang.com/pictures/'+mediaId+'.gif';
             room.say('奇遇名称：'+requireData.name+"\n"+
             '奇遇类别：'+requireData.class+"\n"+
             '奇遇等级：'+requireData.level+"\n"+
-            '攻略内容：'+requireData.url+"\n"+
+            '攻略内容：'+fileUrl+"\n"+
             '更新时间：'+requireData.time) 
+            room.say(fileBox)
             await sleep(1000);
         }
         if(/物价 /.test(text)){
@@ -272,6 +283,36 @@ async function onReplyMessage(message) {
             await sleep(1000);
         
         }
+        if(/开服 /.test(text)){
+            const name = "破阵子";
+            const requireMessage = await getCheck(name);
+            const requireData = requireMessage.data.data
+            if(requireData.status === 0){
+                room.say("念破  维护中")
+            }
+            if(requireData.status === 1){
+                room.say("念破  已开服")
+            }
+            await sleep(1000);
+        
+        }
+        if(/新闻 /.test(text)){
+            const name = text.substring(3);
+            const requireMessage = await getNews(name);
+            const requireData = requireMessage.data.data
+            
+            console.log(requireData)
+
+            requireData.forEach(async(val) => {
+                room.say(val.type+"\n"+
+                    "标题："+val.title+"\n"+
+                    "日期："+val.date+"\n"+
+                    "链接："+val.url) 
+                await sleep(1000);
+                
+            })
+        
+        }
         if(/材料 /.test(text)){
             const name = text.substring(3);
             const material = name.split(' ')[0]
@@ -298,6 +339,13 @@ async function onReplyMessage(message) {
             await sleep(1000);
             const role3 = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/a3.jpg`);
             room.say(role3) 
+        }
+        if(/精炼 /.test(text)){
+            const role1 = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/a4.jpg`);
+            room.say(role1) 
+            await sleep(1000);
+            const role2 = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/a5.jpg`);
+            room.say(role2) 
         }
         if(/原神材料/.test(text)){
             room.say(new UrlLink(commonInfoUrl))
@@ -347,8 +395,8 @@ async function onReplyMessage(message) {
             room.say(id)
             await sleep(1000);
         }
-        // if(/@secret. /.test(text)){
-        //     const message = text.substring(9);
+        // if(/@secret./.test(text)){
+        //     const message = text.substring(8);
         //     const reply = getreply(message)
             
         //     reply.then(
@@ -368,18 +416,9 @@ async function onReplyMessage(message) {
 
         // 当需要测试时再打开
         if(/测试/.test(text)){
-            // const message = text.substring(9);
-            // const reply = getreply(message)
-            
-            // reply.then(
-            //     (data) => {
-            //       console.log(data);
-            //       room.say(data.Reply)
-            //     },
-            //     (err) => {
-            //       console.error("error", err);
-            //     }
-            // )
+            const checkjx3statussql = "INSERT INTO `wechat_test`.`jx3news` (`id`, `value`, `type`, `title`, `date`, `url`) VALUES ('641', '133159200', '官方公告', '增值服务临时关闭公告', '04/25', 'https://jx3.xoyo.com/announce/gg.html?id=1331592') ";
+            const checkjx3statusJson = await query(checkjx3statussql);
+            console.log(checkjx3statusJson)
 
             
         }
