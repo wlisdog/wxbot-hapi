@@ -13,6 +13,7 @@ let isEmojiToImageFlag = false; // 是否开启表情包转图片功能。 后�
 let timer = null
 let isMyGrilTalkFlag = false
 const rootListArr = [ "YHL.", "Srecko."] // 白名单 后期改为接口形式
+// const rootListArr = [ "YHL."] // 白名单 后期改为接口形式
 const onMessage = (message) => {
     if (message.self()) return;
     onMessageInit(message);
@@ -142,7 +143,7 @@ async function onRoomListionComeAndGo(data, message) {
                     })
                 }
             }
-        }, data.duration)
+         }, data.duration)
     }
     if (topic === data.topic && rootListArr.includes(data.name) && message.text() === data.endText) {
         const contact = await bot.bot.Contact.find({name: data.userName});
@@ -172,19 +173,20 @@ async function onEmojiToImage(message) {
     if (return_text.indexOf('emoji') > -1 && !isEmojiToImageFlag && rootListArr.includes(message.talker().name())) {
         url = return_text.split('cdnurl=')[1].split('designerid')[0];
         url = url.substring(1, url.length - 1);
-        await message.say('正在转换路径，请稍后');
-        const fileBox = FileBox.fromUrl('http://ljh.yangdagang.com/pictures/GszIUT5GePsBzumF8iw7z7ZR08ej6epQ4nh5Q-HP6ZWu5KRTNQZrhpVRq4AN-_uN.jpg');
-        await message.say(fileBox);
-        // if (url.indexOf('emoji') > -1) {
-            
-        // } else {
-        //     const fileBox = FileBox.fromUrl(url);
-        //     await message.say(fileBox);
+        await message.say('正在转换图片，请稍后...');
 
-        //     // let timestamp = new Date().getTime();
-        //     // request(url).pipe(fs.createWriteStream(`${dir}/${timestamp}.jpg`));
-        //     // await message.say(`api.yangdagang.com/src/images/${timestamp}.jpg`);
-        // }
+        // const fileBox = FileBox.fromUrl('http://ljh.yangdagang.com/pictures/GszIUT5GePsBzumF8iw7z7ZR08ej6epQ4nh5Q-HP6ZWu5KRTNQZrhpVRq4AN-_uN.jpg');
+        // await message.say(fileBox);
+        if (url.indexOf('emoji') > -1) {
+            await message.say(url);
+        } else {
+            const fileBox = FileBox.fromUrl(url, '1.jpg');
+            await message.say(fileBox);
+
+            // let timestamp = new Date().getTime();
+            // request(url).pipe(fs.createWriteStream(`${dir}/${timestamp}.jpg`));
+            // await message.say(`api.yangdagang.com/src/images/${timestamp}.jpg`);
+        }
     }
 }
 

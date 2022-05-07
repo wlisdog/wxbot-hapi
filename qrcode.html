@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录二维码</title>
+</head>
+<body>
+    <script src="https://cdn.bootcdn.net/ajax/libs/qrcodejs/1.0.0/qrcode.js"></script>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <div id="qrcode1" style="margin-bottom: 100px;"></div>
+    <script>
+       
+        $(function(){
+             $.ajax({
+                url:"http://192.168.1.116:8081/api/getRecord",
+                success:function(result){
+                     var qrcode = new QRCode(document.getElementById('qrcode1'), {
+                        text: result,
+                        width: 100,
+                        height: 100,
+                        colorDark: '#000',
+                        colorLight: "#ffffff"
+                    });
+                }
+            });
+        });
+       
+    </script>
+</body>
+</html>
