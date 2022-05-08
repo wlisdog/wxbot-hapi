@@ -1,5 +1,7 @@
-### Wxbot-hapi
-# Folder structure:
+# Wxbot-hapi
+
+## Folder structure:
+```
 ├── bot
 │   ├── events
 │   │   ├── on-friendship.js
@@ -19,3 +21,4 @@
 ├── index.js
 ├── README.md
 └── test.http
+```
