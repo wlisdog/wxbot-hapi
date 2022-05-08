@@ -5,20 +5,22 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "style:prettier": "prettier --write \"src/**/*.ts\"",
+    "style:prettier": "prettier --write ",
     "start": "./node_modules/.bin/nodemon index.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "nodemon": "^2.0.15",
-    "prettier": "^2.4.1",
+    "prettier": "^2.5.0",
     "qrcode-terminal": "^0.12.0",
     "wechaty": "^0.60.10",
     "wechaty-puppet-padlocal": "^0.4.2"
   },
   "dependencies": {
+    "@fastify/autoload": "^4.0.1",
     "axios": "^0.27.2",
+    "fastify": "^3.29.0",
     "fs": "^0.0.1-security",
     "hot-import": "^0.2.14",
     "node-schedule": "^2.1.0",

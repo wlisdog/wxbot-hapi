@@ -3,7 +3,7 @@
  * @Date: 2021-11-3016:34:52
  */
 import schedule from 'node-schedule';
-import bot from "../../../index.js";
+import bot from "../../../bot/index.js";
 
 //其他规则见 https://www.npmjs.com/package/node-schedule
 // 规则参数讲解    *代表通配符
@@ -44,7 +44,7 @@ const onToWorkMyGirl = async () => {
     const timer = "0 0 19 * * *";
     setSchedule('everydaygirl', timer, async () => {
             console.log('进入定时任务')
-            let contactGirl = await bot.bot.Contact.find({ name: '小抽基' });
+            let contactGirl = await bot.Contact.find({ name: '小抽基' });
             await contactGirl.say('王总，今日几时到达位置，卑职已经等不及了, 望回复~');
     });
 }

@@ -3,7 +3,7 @@
 // import path from 'path';
 // const dir = path.join(__dirname + '/../images');
 // import { FileBox } from 'file-box';
-import bot from '../../index.js'; // 获取微信实例
+import bot from '../../bot/index.js'
 import {
     FileBox,
 } from 'wechaty';
@@ -72,7 +72,7 @@ async function onEmojiToImageFlag(message) {
  */
 async function onMyGirlMessage(message) {
     const name = message.talker().name();
-    const contact = await bot.bot.Contact.find({name: 'YHL.'});
+    const contact = await bot.Contact.find({name: 'YHL.'});
     if (name === '小抽基') {
         if (!isMyGrilTalkFlag) {
             message.say('好的领导，已帮您通知部门小杨, 领导路上注意安全')
@@ -126,7 +126,7 @@ async function onRoomListionComeAndGo(data, message) {
     let { room } = data;
     const topic = await room.topic();
     if (topic === data.topic && rootListArr.includes(data.name) && message.text() === data.startText) {
-        const contact = await bot.bot.Contact.find({name: data.userName});
+        const contact = await bot.Contact.find({name: data.userName});
         isRoomComeAndGoFlag = true
         timer = setInterval(async () => {
             if (contact) {
@@ -146,7 +146,7 @@ async function onRoomListionComeAndGo(data, message) {
          }, data.duration)
     }
     if (topic === data.topic && rootListArr.includes(data.name) && message.text() === data.endText) {
-        const contact = await bot.bot.Contact.find({name: data.userName});
+        const contact = await bot.Contact.find({name: data.userName});
         isRoomComeAndGoFlag = false
         clearInterval(timer)
         if (contact) {

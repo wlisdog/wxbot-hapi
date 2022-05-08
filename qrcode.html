@@ -14,15 +14,17 @@
        
         $(function(){
              $.ajax({
-                url:"http://192.168.1.116:8081/api/getRecord",
+                // url:"http://192.168.1.116:8081/api/getRecord",
+                url:"http://127.0.0.1:3000",
                 success:function(result){
-                     var qrcode = new QRCode(document.getElementById('qrcode1'), {
-                        text: result,
-                        width: 100,
-                        height: 100,
-                        colorDark: '#000',
-                        colorLight: "#ffffff"
-                    });
+                    console.log(result, 'result')
+                    //  var qrcode = new QRCode(document.getElementById('qrcode1'), {
+                    //     text: result,
+                    //     width: 100,
+                    //     height: 100,
+                    //     colorDark: '#000',
+                    //     colorLight: "#ffffff"
+                    // });
                 }
             });
         });
