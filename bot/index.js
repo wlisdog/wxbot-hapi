@@ -1,25 +1,20 @@
-import {
-    Wechaty,
-} from 'wechaty';
+import { Wechaty } from 'wechaty';
 
-import { onScan, onLogin, onMessage }  from '../src/events/index.js';
-import { PuppetPadlocal }  from "wechaty-puppet-padlocal";
+import { onScan, onLogin, onMessage } from './events/index.js';
+import { PuppetPadlocal } from 'wechaty-puppet-padlocal';
 // 动态接码
 const puppet = new PuppetPadlocal({
-    token: 'puppet_padlocal_3706834535544f8da139095432c420ea',
-  });
+  token: 'puppet_padlocal_3706834535544f8da139095432c420ea',
+});
 const bot = new Wechaty({
-    name: 'ding',
-    puppet,
-})
+  name: 'ding',
+  puppet,
+});
 
-bot
-    .on('scan', onScan)
-    .on('login', onLogin)
-    .on('message', onMessage)
-    // .catch(console.error);
+bot.on('scan', onScan).on('login', onLogin).on('message', onMessage);
+// .catch(console.error);
 
-    // .start()
+// .start()
 
 // // http
 // var server = http.createServer(function(req, res) {
@@ -49,11 +44,10 @@ bot
 //         //         loginCode = '我的纸';
 //                 res.end()
 //         //     })
-       
+
 //     }
 // })
 // server.listen(8081)
-
 
 export default bot;
 
