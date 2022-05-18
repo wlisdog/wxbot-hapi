@@ -4,7 +4,7 @@ import { onScan, onLogin, onMessage } from './events/index.js';
 import { PuppetPadlocal } from 'wechaty-puppet-padlocal';
 // 动态接码
 const puppet = new PuppetPadlocal({
-  token: 'puppet_padlocal_3706834535544f8da139095432c420ea',
+  token: 'puppet_padlocal_d892354f77d349f2b7b5f1ad8cd4c068',
 });
 const bot = new Wechaty({
   name: 'ding',
