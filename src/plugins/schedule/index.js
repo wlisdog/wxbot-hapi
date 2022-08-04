@@ -8,7 +8,7 @@ import bot from "../../../index.js";
 import {sleep} from '../../../src/events/sleepThread.js';
 import query from '../../../src/events/testMySQL.js';
 import {getWeather,getImage} from '../../../src/events/webServiceLink.js';
-import {getDaily} from '../../../src/events/JX3Interface.js';
+import {getDaily,getCheck,getNews} from '../../../src/events/JX3Interface.js';
 const rootListArr = [ "Srecko."] 
 
 //其他规则见  
@@ -81,7 +81,7 @@ function cancelSchedule(name) {
   const date = dayjs().format('YYYY-MM-DD')
   const time = dayjs().format('HH:mm:ss')
 
-  const sql = "select TimeStamp from timerremindinfo where Remind_Date >= '"+date+"' and Remind_Time >= '"+time+"'";
+  const sql = "select TimeStamp from timerremindinfo where Remind_Date >= '"+date+"'";
   const messageJson = await query(sql);
   
   messageJson.forEach((val) => {onToPublicmethodReminded(val.TimeStamp)})
@@ -149,8 +149,74 @@ const onToWeatherRemind = async () => {
     });
 }
 
+
+
+
+
 /**
- * @desc 上班打卡提醒
+ * @desc 剑三每日日常推送
+ */
+ const onToGoDailyReminded = async () => {
+  const timer = "00 30 08 * * *";
+  setSchedule('onToGoDailyReminded', timer, async () => {
+
+
+    const room = await bot.bot.Room.find('朵朵');
+    const room2 = await bot.bot.Room.find('茶');
+    const server = '破阵子';
+    const next = '0';
+    const dailyMessage = await getDaily(server,next);
+    console.log(dailyMessage.data.data.team)
+    const dailyData = dailyMessage.data.data
+    const groupData = dailyData.team
+    const sql = "select * from dateinfo where date = '"+dailyData.date+"'";
+    const messageJson = await query(sql);
+
+    if(dailyData.draw){
+      room.say("早上好啊！~( ´∀` )~"+"\n"+
+        "今天是"+messageJson[0].dateformat+"，"+"星期"+dailyData.week+"\n"+
+        "【秘境大战】 "+dailyData.war+"\n"+
+        "【今日战场】 "+dailyData.battle+"\n"+
+        "【阵营任务】 "+dailyData.camp+"\n"+
+        "【美人画像】 "+dailyData.draw+"\n"+"\n"+
+        "【武林通鉴·公共任务】 "+"\n"+groupData[0]+"\n"+
+        "【武林通鉴·秘境任务】 "+"\n"+groupData[1]+"\n"+
+        "【武林通鉴·团队秘境】 "+"\n"+groupData[2]) 
+      room2.say("早上好啊！~( ´∀` )~"+"\n"+
+        "今天是"+messageJson[0].dateformat+"，"+"星期"+dailyData.week+"\n"+
+        "【秘境大战】 "+dailyData.war+"\n"+
+        "【今日战场】 "+dailyData.battle+"\n"+
+        "【阵营任务】 "+dailyData.camp+"\n"+
+        "【美人画像】 "+dailyData.draw+"\n"+"\n"+
+        "【武林通鉴·公共任务】 "+"\n"+groupData[0]+"\n"+
+        "【武林通鉴·秘境任务】 "+"\n"+groupData[1]+"\n"+
+        "【武林通鉴·团队秘境】 "+"\n"+groupData[2]) 
+    }else{
+      room.say("早上好啊！~( ´∀` )~"+"\n"+
+        "今天是"+messageJson[0].dateformat+"，"+"星期"+dailyData.week+"\n"+
+        "【秘境大战】 "+dailyData.war+"\n"+
+        "【今日战场】 "+dailyData.battle+"\n"+
+        "【阵营任务】 "+dailyData.camp+"\n"+"\n"+
+        "【武林通鉴·公共任务】 "+"\n"+groupData[0]+"\n"+
+        "【武林通鉴·秘境任务】 "+"\n"+groupData[1]+"\n"+
+        "【武林通鉴·团队秘境】 "+"\n"+groupData[2]) 
+      room2.say("早上好啊！~( ´∀` )~"+"\n"+
+        "今天是"+messageJson[0].dateformat+"，"+"星期"+dailyData.week+"\n"+
+        "【秘境大战】 "+dailyData.war+"\n"+
+        "【今日战场】 "+dailyData.battle+"\n"+
+        "【阵营任务】 "+dailyData.camp+"\n"+"\n"+
+        "【武林通鉴·公共任务】 "+"\n"+groupData[0]+"\n"+
+        "【武林通鉴·秘境任务】 "+"\n"+groupData[1]+"\n"+
+        "【武林通鉴·团队秘境】 "+"\n"+groupData[2]) 
+    }
+
+  });
+}
+
+
+
+/**
+ * @desc 打卡  上班打卡提醒
  */
  const onToGoToWorkClockReminded = async () => {
   const timer = "00 50 08 * * 1-5";
@@ -166,7 +232,7 @@ const onToWeatherRemind = async () => {
 
 
 /**
- * @desc 下班打卡提醒
+ * @desc 打卡  下班打卡提醒
  */
  const onToAfterWorkClockReminded = async () => {
   const timer = "00 00 18 * * 1-5";
@@ -178,12 +244,8 @@ const onToWeatherRemind = async () => {
   });
 }
 
-
-
-
-
 /**
- * @desc 上班打卡提醒
+ * @desc 多多  上班打卡提醒
  */
  const onToGoToWorkClock2Reminded = async () => {
   const timer = "00 00 08 * * 1-5";
@@ -196,56 +258,8 @@ const onToWeatherRemind = async () => {
 }
 
 
-
-
 /**
- * @desc 剑三每日日常推送
- */
- const onToGoDailyReminded = async () => {
-  const timer = "00 30 08 * * *";
-  setSchedule('onToGoDailyReminded', timer, async () => {
-
-
-          const room = await bot.bot.Room.find('朵朵');
-          const server = '破阵子';
-            const next = '0';
-            const dailyMessage = await getDaily(server,next);
-            console.log(dailyMessage.data.data.team)
-            const dailyData = dailyMessage.data.data
-            const groupData = dailyData.team
-            const sql = "select * from dateinfo where date = '"+dailyData.date+"'";
-            const messageJson = await query(sql);
-
-            if(dailyData.draw){
-                room.say("早上好啊！~( ´∀` )~"+"\n"+
-                    "今天是"+messageJson[0].dateformat+"，"+"星期"+dailyData.week+"\n"+
-                    "【秘境大战】 "+dailyData.war+"\n"+
-                    "【今日战场】 "+dailyData.battle+"\n"+
-                    "【公共任务】 "+dailyData.public+"\n"+
-                    "【阵营任务】 "+dailyData.camp+"\n"+
-                    "【美人画像】 "+dailyData.draw+"\n"+"\n"+
-                    "【武林通鉴·公共任务】 "+"\n"+groupData[0]+"\n"+
-                    "【武林通鉴·秘境任务】 "+"\n"+groupData[1]+"\n"+
-                    "【武林通鉴·团队秘境】 "+"\n"+groupData[2]) 
-            }else{
-                room.say("早上好啊！~( ´∀` )~"+"\n"+
-                    "今天是"+messageJson[0].dateformat+"，"+"星期"+dailyData.week+"\n"+
-                    "【秘境大战】 "+dailyData.war+"\n"+
-                    "【今日战场】 "+dailyData.battle+"\n"+
-                    "【公共任务】 "+dailyData.public+"\n"+
-                    "【阵营任务】 "+dailyData.camp+"\n"+"\n"+
-                    "【武林通鉴·公共任务】 "+"\n"+groupData[0]+"\n"+
-                    "【武林通鉴·秘境任务】 "+"\n"+groupData[1]+"\n"+
-                    "【武林通鉴·团队秘境】 "+"\n"+groupData[2]) 
-            }
-
-  });
-}
-
-
-
-/**
- * @desc 下班打卡提醒
+ * @desc 多多  下班打卡提醒
  */
  const onToAfterWorkClock2Reminded = async () => {
   const timer = "00 30 17 * * 1-5";
@@ -260,10 +274,10 @@ const onToWeatherRemind = async () => {
 
 
 /**
- * @desc 上班打卡提醒
+ * @desc 齐荼  上班打卡提醒
  */
  const onToGoToWorkClock3Reminded = async () => {
-  const timer = "00 55 08 * * 1-5";
+  const timer = "00 20 08 * * 1-5";
   setSchedule('GoToWorkClockReminded', timer, async () => {
  
           const room2 = await bot.bot.Room.find('朵朵');
@@ -278,10 +292,10 @@ const onToWeatherRemind = async () => {
 
 
 /**
- * @desc 下班打卡提醒
+ * @desc 齐荼  下班打卡提醒
  */
  const onToAfterWorkClock3Reminded = async () => {
-  const timer = "00 00 18 * * 1-5";
+  const timer = "00 00 17 * * 1-5";
   setSchedule('AfterWorkClockReminded', timer, async () => {
  
           const room2 = await bot.bot.Room.find('朵朵');
@@ -292,19 +306,116 @@ const onToWeatherRemind = async () => {
   });
 }
 
-
 /**
- * @desc 每日定时提醒
+ * @desc 齐荼  下班打卡二次提醒
  */
- const onToEveryDayReminded = async () => {
-  const timer = "00 10 21 * * *";
-  setSchedule('EveryDayReminded', timer, async () => {
+ const onToEveryDay2Reminded = async () => {
+  const timer = "00 10 17 * * 1-5";
+  setSchedule('AfterWorkClockReminded', timer, async () => {
  
           const room2 = await bot.bot.Room.find('朵朵');
           await room2.sync()
           const members = await room2.member({name: '齐荼'}) 
-          await room2.say('收葫芦。',members)
+          await room2.say('这里是打卡第二次提醒，请不要忘记打卡。',members)
 
+  });
+}
+
+/**
+ * @desc Alexia.  下班提醒
+ */
+ const onToAfterWorkClock4Reminded = async () => {
+  const timer = "00 00 18 * * 1-6";
+  setSchedule('AfterWorkClockReminded', timer, async () => {
+ 
+          const room2 = await bot.bot.Room.find('朵朵');
+          await room2.sync()
+          const members = await room2.member({name: 'Alexia.'}) 
+          await room2.say('已经到了下班时间，请不要忘记打卡。',members)
+
+  });
+}
+
+
+
+
+
+/**
+ * @desc 每周续费提醒
+ */
+ const onToEveryDayReminded = async () => {
+  const timer = "00 00 22 * * 1";
+  setSchedule('EveryDayReminded', timer, async () => {
+ 
+      const room2 = await bot.bot.Room.find('朵朵');
+      await room2.sync()
+      const members = await room2.member({name: 'Srecko.'}) 
+      await room2.say('请补充wechaty token时间',members)
+
+  });
+}
+
+/**
+ * @desc 检查开服状态及官方信息
+ */
+ const onToCheckServerReminded = async () => {
+  const timer = "0 * * * * *";
+  setSchedule('CheckServerReminded', timer, async () => {
+
+    // 检查开服状态
+    const name = "破阵子";
+    const requireMessage = await getCheck(name);
+    const requireData = requireMessage.data.data.status
+
+    const checkjx3statussql = "SELECT code from basiscode where codetype = 'JX3ServerStatus'";
+    const checkjx3statusJson = await query(checkjx3statussql);
+    const status = checkjx3statusJson[0].code
+    if(requireData === Number(status)){
+
+    }else{
+      const checkjx3statussql = "update basiscode set code = '"+requireData+"' where codetype = 'JX3ServerStatus'";
+      await query(checkjx3statussql);
+
+      const room2 = await bot.bot.Room.find('朵朵');
+      const room3 = await bot.bot.Room.find('茶');
+      await room2.sync()
+      await room3.sync()
+      if(requireData === 0){
+          room2.say("念破  维护中")
+          room3.say("念破  维护中")
+      }
+      if(requireData === 1){
+          room2.say("念破  已开服")
+          room3.say("念破  已开服")
+      }
+    }
+    // 检查官方信息
+    const requirenewsMessage = await getNews(5);
+    const requirenewsData = requirenewsMessage.data.data
+
+    requirenewsData.forEach(async(val) => {
+
+      const checkhavingnewssql = "SELECT id from jx3news where id = '"+val.id+"'";
+      const checkhavingnewsJson = await query(checkhavingnewssql);
+      
+      if(!checkhavingnewsJson.length){
+          const checkjx3newssql = "INSERT INTO `wechat_test`.`jx3news` (`id`, `value`, `type`, `title`, `date`, `url`) VALUES ('"+val.id+"', '"+val.value+"', '"+val.type+"', '"+val.title+"', '"+val.date+"', '"+val.url+"') ";
+          await query(checkjx3newssql);
+          const room2 = await bot.bot.Room.find('朵朵');
+          const room3 = await bot.bot.Room.find('茶');
+          await room2.sync()
+          await room3.sync()
+          room2.say(val.type+"\n"+
+              "标题："+val.title+"\n"+
+              "日期："+val.date+"\n"+
+              "链接："+val.url) 
+          room3.say(val.type+"\n"+
+              "标题："+val.title+"\n"+
+              "日期："+val.date+"\n"+
+              "链接："+val.url) 
+      }
+              
+    })
   });
 }
 
@@ -323,8 +434,11 @@ export {
   onToAfterWorkClock2Reminded,
   onToGoToWorkClock3Reminded,
   onToAfterWorkClock3Reminded,
+  onToAfterWorkClock4Reminded,
   onToEveryDayReminded,
+  onToEveryDay2Reminded,
   onToGoDailyReminded,
+  onToCheckServerReminded,
   cancelSchedule,
   stop
 };
