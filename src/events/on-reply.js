@@ -13,7 +13,7 @@ import {sleep} from './sleepThread.js';
 import bot  from '../../index.js'; // 获取微信实例
 import commonInfoUrl  from './common.js'; 
 import {getWeather,getImage,getTimer} from './webServiceLink.js';
-import {getDaily,getDemon,getRandom,getReRandom,getRequire,getStrategy,getPrice,getPrices,getQixue,getMacro,getHeighten,getNews,getCheck} from './JX3Interface.js';
+import {getDaily,getDemon,getRandom,getReRandom,getRequire,getStrategy,getPrice,getQixue,getMacro,getNews,getHorse,getCheck} from './JX3Interface.js';
 // import {getreply} from './nlpchatInterface.js';
 import query from './testMySQL.js';
 import {onToPublicmethodReminded } from "../plugins/schedule/index.js";
@@ -98,11 +98,10 @@ async function onReplyMessage(message) {
             }
             
         }
-        if(/日常 /.test(text)){
+        if(/日常/.test(text) && text.startsWith('日常')){
             const server = '破阵子';
-            const next = '0';
-            const dailyMessage = await getDaily(server,next);
-            console.log(dailyMessage.data.data.team)
+            const num = '0';
+            const dailyMessage = await getDaily(server,num);
             const dailyData = dailyMessage.data.data
             const groupData = dailyData.team
             const sql = "select * from dateinfo where date = '"+dailyData.date+"'";
@@ -158,21 +157,21 @@ async function onReplyMessage(message) {
                 
             })
         }
-        if(/骚话/.test(text)){
+        if(/骚话/.test(text) && text.startsWith('骚话')){
             const randomMessage = await getRandom();
             const randomData = randomMessage.data.data
             room.say(randomData.text) 
         }
-        if(/舔狗/.test(text)){
+        if(/舔狗/.test(text) && text.startsWith('舔狗')){
             const randomMessage = await getReRandom();
             const randomData = randomMessage.data.data
             room.say(randomData.text) 
         }
-        if(/前置 /.test(text)){
+        if(/前置 /.test(text) && text.startsWith('前置')){
             const name = text.substring(3);
             const requireMessage = await getRequire(name);
             const requireData = requireMessage.data.data
-            const fileName = await getImage(requireData.upload);
+            const fileName = await getImage(requireData.url);
         
             const mediaId = fileName.return
             const fileBox = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/${mediaId}.gif`);
@@ -182,9 +181,8 @@ async function onReplyMessage(message) {
             '触发方式：'+requireData.require+"\n"+
             '奇遇奖励：'+requireData.reward) 
             room.say(fileBox)
-            await sleep(1000);
         }
-        if(/攻略 /.test(text)){
+        if(/攻略 /.test(text) && text.startsWith('攻略')){
             const name = text.substring(3);
             const requireMessage = await getStrategy(name);
             const requireData = requireMessage.data.data
@@ -207,10 +205,9 @@ async function onReplyMessage(message) {
             const requireData = requireMessage.data.data
             room.say('商品名称：'+requireData.name+"\n"+
             '商品介绍：'+requireData.info+"\n"+
-            '图片信息：'+requireData.upload) 
+            '图片信息：'+requireData.url) 
             const requireResultData = requireData.data
             
-            console.log(requireResultData)
             await sleep(1000);
             // 数组中1为双线一区念破，所以直接取其值
             requireResultData[1].forEach(async(val) => {
@@ -219,31 +216,13 @@ async function onReplyMessage(message) {
                         "服务器："+val.server+"\n"+
                         "类别："+val.class+"\n"+
                         "更新时间："+val.date+"\n"+
-                        "收付方式："+val.sale+"\n"+
+                        "收付方式："+val.sales+"\n"+
                         "金额："+val.value) 
                         await sleep(1000);
                 }
                 
             })
             
-        }
-
-        if(/价格 /.test(text)){
-            const name = text.substring(3);
-            const requireMessage = await getPrices(name);
-            const requireData = requireMessage.data.data
-            // 数组中1为双线一区，所以直接取其值
-            requireData[1].forEach(async(val) => {
-                room.say("服务器："+val.fwq+"\n"+
-                "物品名称："+val.wpmc+"\n"+
-                "物品别称："+val.wpqc+"\n"+
-                "部位："+val.lb+"\n"+
-                "细类："+val.xl+"\n"+
-                "价格："+val.jg+"\n"+
-                "报价时间："+val.bjsj+"\n"+
-                "方式："+val.lx) 
-                await sleep(1000);
-            })
         }
 
         if(/奇穴 /.test(text)){
@@ -269,37 +248,23 @@ async function onReplyMessage(message) {
             await sleep(1000);
         
         }
-        if(/小药 /.test(text)){
-            const name = text.substring(3);
-            const requireMessage = await getHeighten(name);
-            const requireData = requireMessage.data.data
-            room.say('心法名称：'+requireData.name+"\n"+
-            requireData.heighten_food+"\n"+
-            requireData.auxiliary_food+"\n"+
-            requireData.heighten_drug+"\n"+
-            requireData.auxiliary_drug) 
-            await sleep(1000);
         
-        }
-        if(/开服 /.test(text)){
+        if(/开服/.test(text) && text.startsWith('开服')){
             const name = "破阵子";
             const requireMessage = await getCheck(name);
             const requireData = requireMessage.data.data
-            if(requireData.status === 0){
+            if(requireData.status === '维护'){
                 room.say("念破  维护中")
             }
-            if(requireData.status === 1){
+            if(requireData.status === '正常'){
                 room.say("念破  已开服")
             }
-            await sleep(1000);
         
         }
-        if(/新闻 /.test(text)){
+        if(/新闻 /.test(text) && text.startsWith('新闻')){
             const name = text.substring(3);
             const requireMessage = await getNews(name);
             const requireData = requireMessage.data.data
-            
-            console.log(requireData)
 
             requireData.forEach(async(val) => {
                 room.say(val.type+"\n"+
@@ -311,24 +276,7 @@ async function onReplyMessage(message) {
             })
         
         }
-        if(/材料 /.test(text)){
-            const name = text.substring(3);
-            const material = name.split(' ')[0]
-            const map = name.split(' ')[1]
-            const materialsql = "select code from basiscode where codetype = 'Material' and codename = '"+material+"'";
-            const materialJson = await query(materialsql);
-            const mapsql = "select code from basiscode where codetype = 'Map' and codename = '"+map+"'";
-            const mapJson = await query(mapsql);
-            console.log(materialJson[0].code)
-            console.log(mapJson[0].code)
-            const mediaId = materialJson[0].code + mapJson[0].code
-            console.log(mediaId)
-
-            const fileBox = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/aa${mediaId}.jpg`);
-            room.say(fileBox) 
-        
-        }
-        if(/原神角色/.test(text)){
+        if(/原神角色/.test(text) && text.startsWith('原神角色')){
             const role1 = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/a1.jpg`);
             room.say(role1) 
             await sleep(1000);
@@ -338,28 +286,75 @@ async function onReplyMessage(message) {
             const role3 = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/a3.jpg`);
             room.say(role3) 
         }
-        if(/精炼 /.test(text)){
+        if(/精炼/.test(text) && text.startsWith('精炼')){
             const role1 = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/a4.jpg`);
             room.say(role1) 
             await sleep(1000);
             const role2 = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/a5.jpg`);
             room.say(role2) 
         }
+        if(/蹲宠/.test(text) && text.startsWith('蹲宠')){
+            const role1 = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/a6.jpg`);
+            room.say(role1) 
+        }
+        if(/小药/.test(text)  && text.startsWith('小药')){
+            // const name = text.substring(3);
+            // const requireMessage = await getHeighten(name);
+            // const requireData = requireMessage.data.data
+            // room.say('心法名称：'+requireData.name+"\n"+
+            // requireData.heighten_food+"\n"+
+            // requireData.auxiliary_food+"\n"+
+            // requireData.heighten_drug+"\n"+
+            // requireData.auxiliary_drug) 
+            // await sleep(1000);
+            const role1 = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/a7.jpg`);
+            room.say(role1) 
+
+        
+        }
+        if(/刷马 /.test(text)  && text.startsWith('刷马')){
+            const name = text.substring(3);
+            const requireMessage = await getHorse(name);
+            const requireData = requireMessage.data.data.data
+
+            requireData.forEach(async(val) => {
+                room.say(val.name+"\n"+
+                    "地图："+val.map+"\n"+
+                    "位置："+val.url) 
+                
+            })
+        }
         if(/原神材料/.test(text)){
             room.say(new UrlLink(commonInfoUrl))
         }
-		if(/账号id/.test(text)){
-            room.say('19538887215')
+		if(/开启表情包转换/.test(text)){
+            const id = room.id
+
+            const checkroompurviewsql = "update roompurview set totalpurview = 'Y' where roomId = '"+id+"'";
+            await query(checkroompurviewsql);
+            room.say('表情包转换开启成功')
          }
-        if(/定时任务/.test(text)){
+         if(/关闭表情包转换/.test(text)){
+            const id = room.id
+
+            const checkroompurviewsql = "update roompurview set totalpurview = 'N' where roomId = '"+id+"'";
+            await query(checkroompurviewsql);
+            room.say('表情包转换关闭成功')
+         }
+        if(/定时任务/.test(text) && text.startsWith('定时任务')){
             await room.sync()
             const contact3 = message.talker().name()
+            const contactid = message.talker().id
             const id = room.id
 
             const content = contact3 + '|' + id + '|' +text
             console.log(content)
             const timestamp = await getTimer(content); 
-            
+
+            // 为了不改后面项目改造成更新字段
+            const updatewechatIDsql = "update timerremindinfo set wechatID = '"+contactid+"',Remind_Sign = '1' where TimeStamp = '"+timestamp.return+"'";
+            await query(updatewechatIDsql);
+
             await onToPublicmethodReminded(timestamp.return);
             const members = await room.member({name: contact3}) 
             room.say('您的定时任务已经配置成功',members)
@@ -373,7 +368,7 @@ async function onReplyMessage(message) {
             await sleep(1000);
             room.say(`${topic}`)
         }
-        if(/git/.test(text)){
+        if(/git/.test(text) && text.startsWith('git')){
             const id = `
             git pull origin main
             git add .
@@ -389,27 +384,27 @@ async function onReplyMessage(message) {
             git status
             git checkout -b 分支名
             `
-            console.log(id)
             room.say(id)
             await sleep(1000);
         }
-        if(/查询任务/.test(text)){
+        if(/表格拆分/.test(text) && text.startsWith('表格拆分')){
+            const role1 = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/biaogechaifen.xlsm`);
+            room.say(role1) 
+        }
+        if(/查询任务/.test(text) && text.startsWith('查询任务')){
             const date = dayjs().format('YYYY-MM-DD')
-            const time = dayjs().format('HH:mm:ss')
             
-            const contact3 = message.talker().name()
+            const contact3 = message.talker().id
 
-            const sql = "select count(TimeStamp) count from timerremindinfo where Remind_Date >= '"+date+"' and username = '"+contact3+"'";
+            const sql = "select count(TimeStamp) count from timerremindinfo where Remind_Date >= '"+date+"' and wechatid = '"+contact3+"'";
             
             const countJson = await query(sql);
-
-            console.log(countJson[0].count)
 
             if(countJson[0].count === 0){
                 room.say('未查询到定时任务')
             }else{
                 
-                const timeStampSql = "select TimeStamp from timerremindinfo where Remind_Date >= '"+date+"' and username = '"+contact3+"'";
+                const timeStampSql = "select TimeStamp from timerremindinfo where Remind_Date >= '"+date+"' and wechatid = '"+contact3+"'";
 
                 const timeStampJson = await query(timeStampSql);
 
@@ -431,11 +426,22 @@ async function onReplyMessage(message) {
             
             
         }
-        if(/删除任务/.test(text)){
+        if(/删除任务/.test(text) && text.startsWith('删除任务')){
+            const contact3 = message.talker().id
             const timeStamp = text.substring(4);
-            const checkjx3statussql = "delete from timerremindinfo where TimeStamp = '"+timeStamp+"'";
-            await query(checkjx3statussql);
-            room.say('删除任务成功')
+            // 先校验是否为本人删除任务
+            const sql = "select wechatid from timerremindinfo where TimeStamp = '"+timeStamp+"'";
+            const wechatIDJson = await query(sql);
+
+            if(wechatIDJson[0].wechatid === contact3){
+                const deleteTimeInfosql = "delete from timerremindinfo where TimeStamp = '"+timeStamp+"'";
+                await query(deleteTimeInfosql);
+                room.say('删除任务成功')
+            }else{
+                room.say('不可删除其他用户定时任务')
+            }
+
+            
         }
         // if(/@secret./.test(text)){
         //     const message = text.substring(8);
@@ -457,13 +463,20 @@ async function onReplyMessage(message) {
 
 
         // 当需要测试时再打开
-        if(/测试/.test(text)){
-            const checkjx3statussql = "INSERT INTO `wechat_test`.`jx3news` (`id`, `value`, `type`, `title`, `date`, `url`) VALUES ('641', '133159200', '官方公告', '增值服务临时关闭公告', '04/25', 'https://jx3.xoyo.com/announce/gg.html?id=1331592') ";
-            const checkjx3statusJson = await query(checkjx3statussql);
-            console.log(checkjx3statusJson)
+        // if(/测试/.test(text)){
+        //     console.log(message.talker())
+
+        //     const contact3 = message.talker().name()
+
+        //     console.log(contact3)
+
+        //     const contact = message.talker().id
+
+        //     console.log(contact)
+
 
             
-        }
+        // }
     }   
 }
 

@@ -43,7 +43,7 @@ function cancelSchedule(name) {
 
 
 /**
- * @desc 提醒公共方法
+ * @desc 定时任务提醒公共方法
  */
  const onToPublicmethodReminded = async (timestamp) => {
   
@@ -75,16 +75,51 @@ function cancelSchedule(name) {
 }
 
 /**
+ * @desc 配置队列提醒公共方法
+ */
+ const onToQueuemethodReminded = async (timestamp) => {
+  
+  const sql = "select UserName,RoomId,Schedule,Message,RoomAlias from timerremindinfo where TimeStamp = '"+timestamp+"'";
+  const messageJson = await query(sql);
+  const userName = messageJson[0].UserName
+  const roomAlias = messageJson[0].RoomAlias
+  const roomId = messageJson[0].RoomId
+  const schedule = messageJson[0].Schedule
+  const message = messageJson[0].Message
+
+  // const timer = "00 30 08 * * 1-5";
+  setSchedule(timestamp, schedule, async () => {
+ 
+          const room = await bot.bot.Room.find({id: roomId}) 
+          if(room){
+            if(userName === 'ALL'){
+              await room.say(message)
+            }if(userName === '0012185'){
+              const members = await room.member({roomAlias: roomAlias}) 
+              await room.say(message,members)
+            }else{
+              const members = await room.member({name: userName}) 
+              await room.say(message,members)
+            }
+          }
+
+  });
+}
+
+/**
  * @desc 重启项目加载所有未提醒内容
  */
  const onToRestartReminded = async () => {
   const date = dayjs().format('YYYY-MM-DD')
   const time = dayjs().format('HH:mm:ss')
 
-  const sql = "select TimeStamp from timerremindinfo where Remind_Date >= '"+date+"'";
+  const sql = "select TimeStamp from timerremindinfo where Remind_Sign = '1' and Remind_Date >= '"+date+"' ";
+  const sql2 = "select TimeStamp from timerremindinfo where Remind_Sign = '0' ";
   const messageJson = await query(sql);
+  const messageJson2 = await query(sql2);
   
   messageJson.forEach((val) => {onToPublicmethodReminded(val.TimeStamp)})
+  messageJson2.forEach((val) => {onToQueuemethodReminded(val.TimeStamp)})
 
 }
 
@@ -164,8 +199,8 @@ const onToWeatherRemind = async () => {
     const room = await bot.bot.Room.find('朵朵');
     const room2 = await bot.bot.Room.find('茶');
     const server = '破阵子';
-    const next = '0';
-    const dailyMessage = await getDaily(server,next);
+    const num = '0';
+    const dailyMessage = await getDaily(server,num);
     console.log(dailyMessage.data.data.team)
     const dailyData = dailyMessage.data.data
     const groupData = dailyData.team
@@ -213,148 +248,6 @@ const onToWeatherRemind = async () => {
   });
 }
 
-
-
-/**
- * @desc 打卡  上班打卡提醒
- */
- const onToGoToWorkClockReminded = async () => {
-  const timer = "00 50 08 * * 1-5";
-  setSchedule('GoToWorkClockReminded', timer, async () => {
- 
-          const room2 = await bot.bot.Room.find('打卡');
-          await room2.say('即将要到上班时间，请不要忘记打卡。')
-
-  });
-}
-
-
-
-
-/**
- * @desc 打卡  下班打卡提醒
- */
- const onToAfterWorkClockReminded = async () => {
-  const timer = "00 00 18 * * 1-5";
-  setSchedule('AfterWorkClockReminded', timer, async () => {
- 
-          const room2 = await bot.bot.Room.find('打卡');
-          await room2.say('已经到了下班时间，请不要忘记打卡。')
-
-  });
-}
-
-/**
- * @desc 多多  上班打卡提醒
- */
- const onToGoToWorkClock2Reminded = async () => {
-  const timer = "00 00 08 * * 1-5";
-  setSchedule('GoToWorkClockReminded', timer, async () => {
- 
-          const room2 = await bot.bot.Room.find('多多');
-          await room2.say('即将要到上班时间，请不要忘记打卡。')
-
-  });
-}
-
-
-/**
- * @desc 多多  下班打卡提醒
- */
- const onToAfterWorkClock2Reminded = async () => {
-  const timer = "00 30 17 * * 1-5";
-  setSchedule('AfterWorkClockReminded', timer, async () => {
- 
-          const room2 = await bot.bot.Room.find('多多');
-          await room2.say('已经到了下班时间，请不要忘记打卡。')
-
-  });
-}
-
-
-
-/**
- * @desc 齐荼  上班打卡提醒
- */
- const onToGoToWorkClock3Reminded = async () => {
-  const timer = "00 20 08 * * 1-5";
-  setSchedule('GoToWorkClockReminded', timer, async () => {
- 
-          const room2 = await bot.bot.Room.find('朵朵');
-          await room2.sync()
-          const members = await room2.member({name: '齐荼'}) 
-          await room2.say('即将要到上班时间，请不要忘记打卡。',members)
-
-  });
-}
-
-
-
-
-/**
- * @desc 齐荼  下班打卡提醒
- */
- const onToAfterWorkClock3Reminded = async () => {
-  const timer = "00 00 17 * * 1-5";
-  setSchedule('AfterWorkClockReminded', timer, async () => {
- 
-          const room2 = await bot.bot.Room.find('朵朵');
-          await room2.sync()
-          const members = await room2.member({name: '齐荼'}) 
-          await room2.say('已经到了下班时间，请不要忘记打卡。',members)
-
-  });
-}
-
-/**
- * @desc 齐荼  下班打卡二次提醒
- */
- const onToEveryDay2Reminded = async () => {
-  const timer = "00 10 17 * * 1-5";
-  setSchedule('AfterWorkClockReminded', timer, async () => {
- 
-          const room2 = await bot.bot.Room.find('朵朵');
-          await room2.sync()
-          const members = await room2.member({name: '齐荼'}) 
-          await room2.say('这里是打卡第二次提醒，请不要忘记打卡。',members)
-
-  });
-}
-
-/**
- * @desc Alexia.  下班提醒
- */
- const onToAfterWorkClock4Reminded = async () => {
-  const timer = "00 00 18 * * 1-6";
-  setSchedule('AfterWorkClockReminded', timer, async () => {
- 
-          const room2 = await bot.bot.Room.find('朵朵');
-          await room2.sync()
-          const members = await room2.member({name: 'Alexia.'}) 
-          await room2.say('已经到了下班时间，请不要忘记打卡。',members)
-
-  });
-}
-
-
-
-
-
-/**
- * @desc 每周续费提醒
- */
- const onToEveryDayReminded = async () => {
-  const timer = "00 00 22 * * 1";
-  setSchedule('EveryDayReminded', timer, async () => {
- 
-      const room2 = await bot.bot.Room.find('朵朵');
-      await room2.sync()
-      const members = await room2.member({name: 'Srecko.'}) 
-      await room2.say('请补充wechaty token时间',members)
-
-  });
-}
-
 /**
  * @desc 检查开服状态及官方信息
  */
@@ -370,7 +263,7 @@ const onToWeatherRemind = async () => {
     const checkjx3statussql = "SELECT code from basiscode where codetype = 'JX3ServerStatus'";
     const checkjx3statusJson = await query(checkjx3statussql);
     const status = checkjx3statusJson[0].code
-    if(requireData === Number(status)){
+    if(requireData === status){
 
     }else{
       const checkjx3statussql = "update basiscode set code = '"+requireData+"' where codetype = 'JX3ServerStatus'";
@@ -380,11 +273,11 @@ const onToWeatherRemind = async () => {
       const room3 = await bot.bot.Room.find('茶');
       await room2.sync()
       await room3.sync()
-      if(requireData === 0){
+      if(requireData === '维护'){
           room2.say("念破  维护中")
           room3.say("念破  维护中")
       }
-      if(requireData === 1){
+      if(requireData === '正常'){
           room2.say("念破  已开服")
           room3.say("念破  已开服")
       }
@@ -428,15 +321,7 @@ export {
   onToRestartReminded,
   onToWeatherRemind,
   onToPublicmethodReminded,
-  onToGoToWorkClockReminded,
-  onToAfterWorkClockReminded,
-  onToGoToWorkClock2Reminded,
-  onToAfterWorkClock2Reminded,
-  onToGoToWorkClock3Reminded,
-  onToAfterWorkClock3Reminded,
-  onToAfterWorkClock4Reminded,
-  onToEveryDayReminded,
-  onToEveryDay2Reminded,
+  onToQueuemethodReminded,
   onToGoDailyReminded,
   onToCheckServerReminded,
   cancelSchedule,
