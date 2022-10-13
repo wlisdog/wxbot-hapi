@@ -200,8 +200,69 @@ async function getRequire(name) {
  */
  async function getReRandom() {
   return new Promise((resolve,reject)=>{
-      axios.post('https://www.jx3api.com/realize/random', {
+      axios.post('https://www.jx3api.com/data/useless/flatterer', {
         
+        })
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          console.log(error);
+          reject()
+        });
+  });
+}
+
+
+/**
+ * 官方资讯
+ * @desc 搜索官方近期发布的最新公告，新闻等相关内容。
+ * @param limit 限制返回数量，可选范围1-50。
+ */
+ async function getNews(limit) {
+  return new Promise((resolve,reject)=>{
+      axios.post('https://www.jx3api.com/data/web/news', {
+        limit: limit
+        })
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          console.log(error);
+          reject()
+        });
+  });
+}
+
+/**
+ * 刷新地点
+ * @desc 搜索某个地图刷新的马驹名称和刷新位置。
+ * @param name 地图名称/马驹名称，搜索该地图出现的马驹或搜索该马驹出现的地图。
+ */
+ async function getHorse(name) {
+  return new Promise((resolve,reject)=>{
+      axios.post('https://www.jx3api.com/app/horse', {
+        name: name
+        })
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          console.log(error);
+          reject()
+        });
+  });
+}
+
+/**
+ * 开服检查
+ * @desc 检查目标服务器的开服状态，可用于开服监控。
+ * @param server  区服名称，支持体验服和缘起大区，查询指定区服的开服状态；
+ */
+ async function getCheck(server) {
+  return new Promise((resolve,reject)=>{
+      axios.post('https://www.jx3api.com/data/server/check', {
+        server: server
         })
         .then(function (response) {
           resolve(response)
