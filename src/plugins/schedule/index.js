@@ -263,7 +263,7 @@ const onToWeatherRemind = async () => {
     const checkjx3statussql = "SELECT code from basiscode where codetype = 'JX3ServerStatus'";
     const checkjx3statusJson = await query(checkjx3statussql);
     const status = checkjx3statusJson[0].code
-    if(requireData === status){
+    if(requireData === Number(status)){
 
     }else{
       const checkjx3statussql = "update basiscode set code = '"+requireData+"' where codetype = 'JX3ServerStatus'";
@@ -273,13 +273,13 @@ const onToWeatherRemind = async () => {
       const room3 = await bot.bot.Room.find('茶');
       await room2.sync()
       await room3.sync()
-      if(requireData === '维护'){
-          room2.say("念破  维护中")
-          room3.say("念破  维护中")
+      if(requireData === 0){
+          room2.say("念破  已开始维护")
+          room3.say("念破  已开始维护")
       }
-      if(requireData === '正常'){
-          room2.say("念破  已开服")
-          room3.say("念破  已开服")
+      if(requireData === 1){
+          room2.say("开服 破阵子(•̀ᴗ•́)")
+          room3.say("开服 破阵子(•̀ᴗ•́)")
       }
     }
     // 检查官方信息

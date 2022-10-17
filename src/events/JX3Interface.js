@@ -274,6 +274,37 @@ async function getRequire(name) {
   });
 }
 
+/**
+ * 名剑战绩
+ * @desc 角色近期战绩记录
+ * @param server  区服名称
+ * @param name  角色名称
+ * @param mode  竞技场类型，支持22、33、55
+ * @param robot  机器人名称
+ * @param ticket  推栏抓包token
+ * @param token 站点标识，检查请求权限。
+ */
+ async function getRecent(server,mode,name) {
+  return new Promise((resolve,reject)=>{
+      axios.post('https://www.jx3api.com/view/arena/recent', {
+        server: server,
+        name : name,
+        mode : mode,
+        robot : 'secret.',
+        ticket : 'f578b36ba782426793e6975290d5fda0:l1464782906:kingsoft::4BgNG67NcUH+Qsnt3qIv0A==',
+        token : 'k5q7j5azzanqg5bwow'
+
+        })
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          console.log(error);
+          reject()
+        });
+  });
+}
+
 export  {
     getDaily,
     getDemon,
@@ -287,5 +318,6 @@ export  {
     getReRandom,
     getNews,
     getHorse,
-    getCheck
+    getCheck,
+    getRecent
   };

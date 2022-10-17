@@ -13,7 +13,7 @@ import {sleep} from './sleepThread.js';
 import bot  from '../../index.js'; // 获取微信实例
 import commonInfoUrl  from './common.js'; 
 import {getWeather,getImage,getTimer} from './webServiceLink.js';
-import {getDaily,getDemon,getRandom,getReRandom,getRequire,getStrategy,getPrice,getQixue,getMacro,getNews,getHorse,getCheck} from './JX3Interface.js';
+import {getDaily,getDemon,getRandom,getReRandom,getRequire,getStrategy,getPrice,getQixue,getMacro,getNews,getHorse,getCheck,getRecent} from './JX3Interface.js';
 // import {getreply} from './nlpchatInterface.js';
 import query from './testMySQL.js';
 import {onToPublicmethodReminded } from "../plugins/schedule/index.js";
@@ -253,12 +253,34 @@ async function onReplyMessage(message) {
             const name = "破阵子";
             const requireMessage = await getCheck(name);
             const requireData = requireMessage.data.data
-            if(requireData.status === '维护'){
+            
+            console.log(requireData)
+            if(requireData.status === 0){
                 room.say("念破  维护中")
             }
-            if(requireData.status === '正常'){
+            if(requireData.status === 1){
                 room.say("念破  已开服")
             }
+        
+        }
+        if(/名剑战绩 /.test(text) && text.startsWith('名剑战绩')){
+            const server = '破阵子';
+            const mode = text.split(' ')[1];
+            const name = text.split(' ')[2];
+            const requireMessage = await getRecent(server,mode,name);
+            const requireData = requireMessage.data.data
+            if(requireMessage.data.code === 200){
+                const fileName = await getImage(requireData.url);
+        
+                const mediaId = fileName.return
+                const fileBox = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/${mediaId}.gif`);
+                room.say(fileBox)
+            }if(requireMessage.data.code === 412){
+                room.say('该角色战绩未公开')
+            }if(requireMessage.data.code === 404){
+                room.say('该角色信息未收录')
+            }
+            
         
         }
         if(/新闻 /.test(text) && text.startsWith('新闻')){
