@@ -31,14 +31,18 @@ async function getDaily(server,num) {
 }
 
 /**
- * 金价比例
+ * 金币比例
  * @desc 检查近十天的金价比例，数据仅供参考。
  * @param server 用于返回目标服务器平均金价比例，当输入空参数时，返回全部服务器，默认空（返回全部服务器比例）。
  */
 async function getDemon(server) {
     return new Promise((resolve,reject)=>{
-        axios.post('https://www.jx3api.com/data/trade/demon', {
+        axios.post('https://www.jx3api.com/view/trade/demon', {
             server: server,
+            limit: 10,
+            robot: 'secret.',
+            cache: 1,
+            token: 'k5q7j5azzanqg5bwow'
           })
           .then(function (response) {
             resolve(response)
@@ -118,9 +122,11 @@ async function getRequire(name) {
  */
  async function getPrice(name) {
     return new Promise((resolve,reject)=>{
-        axios.post('https://www.jx3api.com/data/trade/search', {
+        axios.post('https://www.jx3api.com/view/trade/search', {
             name: name,
-            token: 'k5q7j5azzanqg5bwow'
+            token: 'k5q7j5azzanqg5bwow',
+            robot: 'secret.',
+            cache: 1
           })
           .then(function (response) {
             resolve(response)
@@ -133,65 +139,6 @@ async function getRequire(name) {
 }
 
 
-/**
- * 推荐奇穴
- * @desc 推荐当前赛季所使用的奇穴。
- * @param name 输入心法名称，搜索当前赛季热门奇穴。
- */
- async function getQixue(name) {
-    return new Promise((resolve,reject)=>{
-        axios.post('https://www.jx3api.com/app/qixue', {
-            name: name
-          })
-          .then(function (response) {
-            resolve(response)
-          })
-          .catch(function (error) {
-            console.log(error);
-            reject()
-          });
-    });
-}
-
-/**
- * 查宏命令
- * @desc 推荐当前赛季热门的宏命令。
- * @param name 输入心法名称，搜索当前赛季热门奇穴。
- */
- async function getMacro(name) {
-    return new Promise((resolve,reject)=>{
-        axios.post('https://www.jx3api.com/app/macro', {
-            name: name
-          })
-          .then(function (response) {
-            resolve(response)
-          })
-          .catch(function (error) {
-            console.log(error);
-            reject()
-          });
-    });
-}
-
-/**
- * 推荐小药
- * @desc 推荐当前赛季所使用的小吃小药。
- * @param name 输入心法名称，搜索当前赛季推荐小药。
- */
- async function getHeighten(name) {
-    return new Promise((resolve,reject)=>{
-        axios.post('https://www.jx3api.com/app/heighten', {
-            name: name
-          })
-          .then(function (response) {
-            resolve(response)
-          })
-          .catch(function (error) {
-            console.log(error);
-            reject()
-          });
-    });
-}
 
 
 /**
@@ -222,7 +169,7 @@ async function getRequire(name) {
  async function getNews(limit) {
   return new Promise((resolve,reject)=>{
       axios.post('https://www.jx3api.com/data/web/news', {
-        limit: limit
+          limit: limit
         })
         .then(function (response) {
           resolve(response)
@@ -242,7 +189,7 @@ async function getRequire(name) {
  async function getHorse(name) {
   return new Promise((resolve,reject)=>{
       axios.post('https://www.jx3api.com/app/horse', {
-        name: name
+          name: name
         })
         .then(function (response) {
           resolve(response)
@@ -262,7 +209,7 @@ async function getRequire(name) {
  async function getCheck(server) {
   return new Promise((resolve,reject)=>{
       axios.post('https://www.jx3api.com/data/server/check', {
-        server: server
+          server: server
         })
         .then(function (response) {
           resolve(response)
@@ -287,13 +234,207 @@ async function getRequire(name) {
  async function getRecent(server,mode,name) {
   return new Promise((resolve,reject)=>{
       axios.post('https://www.jx3api.com/view/arena/recent', {
-        server: server,
-        name : name,
-        mode : mode,
-        robot : 'secret.',
-        ticket : 'f578b36ba782426793e6975290d5fda0:l1464782906:kingsoft::4BgNG67NcUH+Qsnt3qIv0A==',
-        token : 'k5q7j5azzanqg5bwow'
+          server: server,
+          name: name,
+          mode: mode,
+          robot: 'secret.',
+          ticket: 'f578b36ba782426793e6975290d5fda0:l1464782906:kingsoft::4BgNG67NcUH+Qsnt3qIv0A==',
+          token: 'k5q7j5azzanqg5bwow'
+        })
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          console.log(error);
+          reject()
+        });
+  });
+}
 
+/**
+ * 角色奇遇
+ * @desc 角色奇遇触发记录(不保证遗漏)
+ * @param server  区服名称
+ * @param name  角色名称
+ * @param robot  机器人名称
+ * @param ticket  推栏抓包token
+ * @param token 站点标识，检查请求权限。
+ */
+ async function getSerendipity(server,name) {
+  return new Promise((resolve,reject)=>{
+      axios.post('https://www.jx3api.com/view/lucky/serendipity', {
+          server: server,
+          name: name,
+          robot: 'secret.',
+          ticket: 'f578b36ba782426793e6975290d5fda0:l1464782906:kingsoft::4BgNG67NcUH+Qsnt3qIv0A==',
+          token: 'k5q7j5azzanqg5bwow'
+        })
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          console.log(error);
+          reject()
+        });
+  });
+}
+
+
+/**
+ * 奇遇统计
+ * @desc 统计奇遇近期触发角色记录
+ * @param server  区服名称
+ * @param name  角色名称
+ * @param limit  条数
+ * @param robot  机器人名称
+ * @param cache  缓存模式，缓存模式下有效提高返回速度，可选范围[0-1]，默认值 : 1。
+ * @param token 站点标识，检查请求权限。
+ */
+ async function getStatistical(server,name) {
+  return new Promise((resolve,reject)=>{
+      axios.post('https://www.jx3api.com/view/lucky/statistical', {
+          server: server,
+          name: name,
+          limit: 10,
+          robot: 'secret.',
+          cache: 1,
+          token: 'k5q7j5azzanqg5bwow'
+        })
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          console.log(error);
+          reject()
+        });
+  });
+}
+
+/**
+ * 装备属性
+ * @desc 角色装备属性详情
+ * @param server  区服名称
+ * @param name  角色名称
+ * @param cache  缓存模式，缓存模式下有效提高返回速度，可选范围[0-1]，默认值 : 1；
+ * @param robot  机器人名称
+ * @param ticket  推栏抓包token
+ * @param token 站点标识，检查请求权限。
+ */
+ async function getAttribute(server,name) {
+  return new Promise((resolve,reject)=>{
+      axios.post('https://www.jx3api.com/view/role/attribute', {
+          server: server,
+          name: name,
+          cache: 1,
+          robot: 'secret.',
+          ticket: 'f578b36ba782426793e6975290d5fda0:l1464782906:kingsoft::4BgNG67NcUH+Qsnt3qIv0A==',
+          token: 'k5q7j5azzanqg5bwow'
+        })
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          console.log(error);
+          reject()
+        });
+  });
+}
+
+/**
+ * 烟花记录
+ * @desc 角色烟花燃放记录
+ * @param server  区服名称
+ * @param name  角色名称
+ * @param cache  缓存模式，缓存模式下有效提高返回速度，可选范围[0-1]，默认值 : 1；
+ * @param robot  机器人名称
+ * @param token 站点标识，检查请求权限。
+ */
+ async function getFirework(server,name) {
+  return new Promise((resolve,reject)=>{
+      axios.post('https://www.jx3api.com/view/role/firework', {
+          server: server,
+          name: name,
+          cache: 1,
+          robot: 'secret.',
+          token: 'k5q7j5azzanqg5bwow'
+        })
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          console.log(error);
+          reject()
+        });
+  });
+}
+
+/**
+ * 新闻资讯
+ * @desc 新闻资讯图片合成
+ * @param url  新闻资讯或维护公告链接，截图指定页面；
+ * @param token 站点标识，检查请求权限。
+ */
+ async function getViewNews(url) {
+  return new Promise((resolve,reject)=>{
+      axios.post('https://www.jx3api.com/view/web/news', {
+          url: url,
+          token: 'k5q7j5azzanqg5bwow'
+        })
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          console.log(error);
+          reject()
+        });
+  });
+}
+
+/**
+ * 团队招募
+ * @desc 团队招募信息
+ * @param server  区服名称，筛选记录；
+ * @param keyword  关键字，筛选团长名称，活动名称，招募信息；
+ * @param robot  机器人名称，图片底部水印生成；
+ * @param cache  缓存模式，缓存模式下有效提高返回速度，可选范围[0-1]，默认值 : 1；
+ * @param token 站点标识，检查请求权限。
+ */
+ async function getRecruit(server,keyword) {
+  return new Promise((resolve,reject)=>{
+      axios.post('https://www.jx3api.com/view/team/member/recruit', {
+          server: server,
+          keyword: keyword,
+          cache: 1,
+          robot: 'secret.',
+          token: 'k5q7j5azzanqg5bwow'
+        })
+        .then(function (response) {
+          resolve(response)
+        })
+        .catch(function (error) {
+          console.log(error);
+          reject()
+        });
+  });
+}
+
+/**
+ * 战功榜单
+ * @desc 客户端战功榜单
+ * @param type 榜单类型，可选范围[赛季恶人五十强 赛季浩气五十强 上周恶人五十强 上周浩气五十强 本周恶人五十强 本周浩气五十强]；
+ * @param server  区服名称，筛选记录；
+ * @param cache  缓存模式，缓存模式下有效提高返回速度，可选范围[0-1]，默认值 : 1；
+ * @param robot  机器人名称，图片底部水印生成；
+ * @param token 站点标识，检查请求权限。
+ */
+ async function getExcellent(type,server) {
+  return new Promise((resolve,reject)=>{
+      axios.post('https://www.jx3api.com/view/rank/excellent', {
+          type: type,
+          server: server,
+          cache: 1,
+          robot: 'secret.',
+          token: 'k5q7j5azzanqg5bwow'
         })
         .then(function (response) {
           resolve(response)
@@ -312,12 +453,16 @@ export  {
     getRequire,
     getStrategy,
     getPrice,
-    getQixue,
-    getMacro,
-    getHeighten,
     getReRandom,
     getNews,
     getHorse,
     getCheck,
-    getRecent
+    getRecent,
+    getSerendipity,
+    getStatistical,
+    getAttribute,
+    getFirework,
+    getViewNews,
+    getRecruit,
+    getExcellent
   };

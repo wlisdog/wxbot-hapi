@@ -2,13 +2,14 @@
  * @Description:  定时任务
  * @Date: 2021-11-3016:34:52
  */
+import {FileBox} from 'wechaty';
 import schedule from 'node-schedule';
 import dayjs from 'dayjs';
 import bot from "../../../index.js";
 import {sleep} from '../../../src/events/sleepThread.js';
 import query from '../../../src/events/testMySQL.js';
 import {getWeather,getImage} from '../../../src/events/webServiceLink.js';
-import {getDaily,getCheck,getNews} from '../../../src/events/JX3Interface.js';
+import {getDaily,getCheck,getNews,getViewNews} from '../../../src/events/JX3Interface.js';
 const rootListArr = [ "Srecko."] 
 
 //其他规则见  
@@ -306,11 +307,78 @@ const onToWeatherRemind = async () => {
               "标题："+val.title+"\n"+
               "日期："+val.date+"\n"+
               "链接："+val.url) 
+          await sleep(1000);
+          const requireMessage = await getViewNews(val.url);
+          const requireData = requireMessage.data.data
+          const fileName = await getImage(requireData.url);
+      
+          const mediaId = fileName.return
+          const fileBox = FileBox.fromUrl(`http://ljh.yangdagang.com/pictures/${mediaId}.gif`);
+          room2.say(fileBox)
+          room3.say(fileBox)
       }
               
     })
   });
 }
+
+
+
+/**
+ * @desc 齐荼  上班打卡提醒
+ */
+ const onToGoToWorkClock1Reminded = async () => {
+  const timer = "00 20 08 * * 1-5";
+  setSchedule('GoToWorkClockReminded', timer, async () => {
+
+          const contact = await bot.bot.Contact.find('齐荼');
+          await contact.say('即将要到上班时间，请不要忘记打卡。')
+
+  });
+}
+
+
+
+
+/**
+ * @desc 齐荼  下班打卡提醒
+ */
+ const onToAfterWorkClock1Reminded = async () => {
+  const timer = "00 00 17 * * 1-5";
+  setSchedule('AfterWorkClockReminded', timer, async () => {
+
+          const contact = await bot.bot.Contact.find('齐荼');
+          await contact.say('已经到了下班时间，请不要忘记打卡。')
+
+  });
+}
+
+/**
+ * @desc 齐荼  下班打卡二次提醒
+ */
+ const onToAfterWorkClock2Reminded = async () => {
+  const timer = "00 10 17 * * 1-5";
+  setSchedule('AfterWorkClockReminded', timer, async () => {
+ 
+          const contact = await bot.bot.Contact.find('齐荼');
+          await contact.say('这里是下班打卡第二次提醒，请不要忘记打卡。')
+
+  });
+}
+
+/**
+ * @desc 齐荼  吃药提醒
+ */
+ const onToEveryDayReminded = async () => {
+  const timer = "00 00 19 * * *";
+  setSchedule('AfterWorkClockReminded', timer, async () => {
+
+          const contact = await bot.bot.Contact.find('齐荼');
+          await contact.say('到时间需要吃药了。')
+
+  });
+}
+
 
 
 async function stop() {
@@ -325,5 +393,9 @@ export {
   onToGoDailyReminded,
   onToCheckServerReminded,
   cancelSchedule,
+  onToGoToWorkClock1Reminded,
+  onToAfterWorkClock1Reminded,
+  onToAfterWorkClock2Reminded,
+  onToEveryDayReminded,
   stop
 };
